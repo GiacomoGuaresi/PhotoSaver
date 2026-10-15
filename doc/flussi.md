@@ -76,11 +76,12 @@ interfaccia si misura su questo.
 - **Barra in basso**, sempre visibile, con lo stato dei due dischi. Molte
   funzioni dipendono da quali dischi sono collegati.
 
-_(?) Con i principi "granny software" la barra laterale potrebbe essere
-troppo da "programma per esperti". Alternativa: una **home** con pochi
-pulsanti grandi ("Aggiungi foto", "Guarda le foto", "Controlla i dischi",
-"Ho finito") e ogni funzione come procedura a passi con "Indietro" /
-"Avanti". Storico e Cestino finirebbero in un menu secondario._
+✅ **Deciso**: con i principi "granny software" la barra laterale era troppo da
+"programma per esperti". Si usa una **home** con pochi pulsanti grandi
+("Aggiungi foto", "Guarda le foto", "Controlla i dischi") e ogni funzione è una
+procedura a passi con "Indietro". La barra in basso resta, con lo stato dei
+dischi, il menu **Altro** (Storico, Cestino, Impostazioni) e **Ho finito**. Lo
+schema sopra con la barra laterale è superato.
 
 ## 1. Avvio e riconoscimento dei dischi
 

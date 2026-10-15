@@ -54,13 +54,17 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 
 ## M3 — Interfaccia: il flusso completo → `v0.3.0`
 
+Interfaccia "granny software" (vedi [flussi](flussi.md)): una **home** con pochi
+pulsanti grandi, ogni funzione è una procedura a passi; Storico e Cestino nel
+menu "Altro".
+
 | # | Step | Commit | Stato |
 |---|---|---|---|
-| 3.1 | Finestra, tema scuro e design da PrintPicker, barra laterale, italiano e inglese | `feat(ui): main window and theme` | ⬜ |
-| 3.2 | **Barra stato dischi** + riconoscimento dei dischi (percorsi configurati in sviluppo) | `feat(ui): disk status` | ⬜ |
-| 3.3 | Procedura guidata **crea archivio** (sui dischi simulati, senza formattazione) | `feat(ui): create archive wizard` | ⬜ |
-| 3.4 | **Carica**: scelta cartelle, anteprima, copia con avanzamento, proposta di eliminare l'originale | `feat(ui): upload flow` | ⬜ |
-| 3.5 | **Check**: rapido automatico, completo manuale, elenco differenze con azioni | `feat(ui): check flow` | ⬜ |
+| 3.1 | Finestra, tema leggibile (testi grandi, contrasto alto), schermate a passi con "Indietro", home, barra dei dischi, italiano e inglese | `feat(ui): main window and theme` | ✅ |
+| 3.2 | **Collega i dischi**: riconoscimento dei dischi (in sviluppo: percorsi configurati), schermata d'attesa, sola lettura con un disco, controllo veloce all'avvio, "Ho finito" | `feat(ui): connect disks` | ⬜ |
+| 3.3 | **Prepara i dischi**: procedura guidata per creare l'archivio (sui dischi simulati, senza formattazione) | `feat(ui): prepare disks wizard` | ⬜ |
+| 3.4 | **Aggiungi foto**: scelta cartelle, anteprima, copia con avanzamento, proposta di eliminare gli originali | `feat(ui): add photos flow` | ⬜ |
+| 3.5 | **Controlla i dischi**: controllo veloce e approfondito, problemi raggruppati con l'azione proposta, operazioni interrotte | `feat(ui): check flow` | ⬜ |
 | 3.6 | **Storico** e **Cestino** | `feat(ui): history and trash` | ⬜ |
 
 ## M4 — Visualizzatore → `v0.4.0`

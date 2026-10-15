@@ -9,7 +9,11 @@ authors = [{ name = "Giacomo Guaresi" }]
 requires-python = ">=3.11"
 dependencies = [
     "pillow>=11",
+    "pyside6>=6.7",
 ]
+
+[project.gui-scripts]
+photosaver = "photosaver.ui.app:main"
 
 [project.urls]
 Repository = "https://github.com/GiacomoGuaresi/PhotoSaver"
@@ -17,6 +21,7 @@ Repository = "https://github.com/GiacomoGuaresi/PhotoSaver"
 [dependency-groups]
 dev = [
     "pytest>=8",
+    "pytest-qt>=4.4",
     "ruff>=0.6",
 ]
 
@@ -32,6 +37,7 @@ packages = ["src/photosaver"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+qt_api = "pyside6"
 
 [tool.ruff]
 line-length = 100
