@@ -345,97 +345,97 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
 <context>
     <name>Controller</name>
     <message>
-        <location filename="../ui/controller.py" line="54" />
+        <location filename="../ui/controller.py" line="55" />
         <source>History</source>
         <translation>Storico</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="56" />
+        <location filename="../ui/controller.py" line="57" />
         <source>Trash</source>
         <translation>Cestino</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="150" />
+        <location filename="../ui/controller.py" line="151" />
         <source>Disk %1</source>
         <translation>Disco %1</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="153" />
+        <location filename="../ui/controller.py" line="154" />
         <source>not connected</source>
         <translation>non collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="156" />
+        <location filename="../ui/controller.py" line="157" />
         <source>connected</source>
         <translation>collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="159" />
+        <location filename="../ui/controller.py" line="160" />
         <source>connected · %1 free</source>
         <translation>collegato · %1 liberi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="168" />
+        <location filename="../ui/controller.py" line="169" />
         <source>Perfect, both disks are here</source>
         <translation>Perfetto, ho trovato entrambi i dischi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="169" />
+        <location filename="../ui/controller.py" line="170" />
         <source>I'm checking that all the photos are fine… it takes a few seconds.</source>
         <translation>Sto controllando che le foto siano tutte a posto… ci vuole qualche secondo.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="186" />
+        <location filename="../ui/controller.py" line="187" />
         <source>Last time something was interrupted. Your photos are safe: I'll fix it.</source>
         <translation>L'ultima volta qualcosa si è interrotto. Le tue foto sono al sicuro: sistemo io.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="188" />
+        <location filename="../ui/controller.py" line="189" />
         <source>Fix</source>
         <translation>Sistema</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/controller.py" line="193" />
+        <location filename="../ui/controller.py" line="194" />
         <source>I found %n thing(s) to sort out on the disks.</source>
         <translation><numerusform>Ho trovato %n cosa da sistemare sui dischi.</numerusform><numerusform>Ho trovato %n cose da sistemare sui dischi.</numerusform></translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="195" />
+        <location filename="../ui/controller.py" line="196" />
         <source>Let's look together</source>
         <translation>Vediamo insieme</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="200" />
+        <location filename="../ui/controller.py" line="201" />
         <source>Some files can't be read. Run a check of the disks.</source>
         <translation>Alcuni file non si riescono a leggere. Fai un controllo dei dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="202" />
+        <location filename="../ui/controller.py" line="203" />
         <source>Check</source>
         <translation>Controlla</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="206" />
+        <location filename="../ui/controller.py" line="207" />
         <source>Your photos are safe on both disks.</source>
         <translation>Le tue foto sono al sicuro su entrambi i dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="214" />
+        <location filename="../ui/controller.py" line="215" />
         <source>I'm finishing what was interrupted…</source>
         <translation>Sto completando quello che si era interrotto…</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="306" />
+        <location filename="../ui/controller.py" line="315" />
         <source>Some photos could not be restored: a photo with the same name is already there.</source>
         <translation>Alcune foto non si sono potute ripristinare: c'è già una foto con lo stesso nome.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="332" />
+        <location filename="../ui/controller.py" line="341" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation>Stai guardando solo il Disco %1. Per aggiungere foto collega anche il Disco %2.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="386" />
+        <location filename="../ui/controller.py" line="398" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation>Qualcosa non è andato, le tue foto non sono state toccate: %1</translation>
     </message>
@@ -697,6 +697,31 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <location filename="../ui/add_photos.py" line="293" />
         <source>Copy %n photo(s) to both disks</source>
         <translation><numerusform>Copia %n foto sui due dischi</numerusform><numerusform>Copia %n foto sui due dischi</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="180" />
+        <source>Previous</source>
+        <translation>Precedente</translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="182" />
+        <source>Next</source>
+        <translation>Avanti</translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="213" />
+        <source>%1 of %2</source>
+        <translation>%1 di %2</translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="228" />
+        <source>Loading…</source>
+        <translation>Caricamento…</translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="262" />
+        <source>This photo can't be opened: it may be damaged.</source>
+        <translation>Questa foto non si riesce ad aprire: potrebbe essere rovinata.</translation>
     </message>
 </context>
 <context>
@@ -1116,6 +1141,14 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <location filename="../ui/history_trash.py" line="223" />
         <source>Delete for good</source>
         <translation>Elimina definitivamente</translation>
+    </message>
+</context>
+<context>
+    <name>VideoView</name>
+    <message>
+        <location filename="../ui/preview.py" line="148" />
+        <source>This video can't be played on this computer.</source>
+        <translation>Questo video non si riesce a riprodurre su questo computer.</translation>
     </message>
 </context>
 <context>

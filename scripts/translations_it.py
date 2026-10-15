@@ -414,4 +414,14 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     "Delete for good": "Elimina definitivamente",
     # Viewer
     "All your photos": "Tutte le tue foto",
+    # Preview
+    "Previous": "Precedente",
+    "%1 of %2": "%1 di %2",
+    "Loading…": "Caricamento…",
+    "This photo can't be opened: it may be damaged.": (
+        "Questa foto non si riesce ad aprire: potrebbe essere rovinata."
+    ),
+    "This video can't be played on this computer.": (
+        "Questo video non si riesce a riprodurre su questo computer."
+    ),
 }

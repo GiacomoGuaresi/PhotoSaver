@@ -108,3 +108,17 @@ def test_operations_stop_the_background_thumbnails(qtbot, ui):
     window, controller = ui
     window.current.add.click()
     assert controller._filler is None
+
+
+def test_double_click_photo_opens_preview(qtbot, ui):
+    from photosaver.ui.preview import PreviewScreen
+
+    window, controller = ui
+    viewer = controller.show_viewer()
+    viewer.show_folder("FOTO 2024/NEVE 2024")
+    viewer._open(viewer.model.index(3))
+    preview = window.current
+    assert isinstance(preview, PreviewScreen) and preview.row == 3
+    assert len(preview.records) == 10
+    preview.back_button.click()
+    assert window.current is viewer

@@ -144,3 +144,23 @@ def fill(
         if on_progress:
             on_progress(n + 1, len(todo))
     return len(todo)
+
+
+# Full screen preview
+
+PREVIEW_SIZE = 2560
+
+
+def load_preview(path: Path, size: int = PREVIEW_SIZE) -> Image.Image:
+    """The photo, turned the right way up, at most ``size`` pixels, in RGB."""
+    if kind_of(path.name) == VIDEO:
+        raise NoThumbnail(f"{path.name} is a video")
+    try:
+        image = _open(path) if kind_of(path.name) == RAW else Image.open(path)
+        with image:
+            image.draft("RGB", (size, size))
+            image = ImageOps.exif_transpose(image)
+            image.thumbnail((size, size))
+            return image.convert("RGB")
+    except (OSError, UnidentifiedImageError, ValueError, Image.DecompressionBombError) as error:
+        raise NoThumbnail(f"{path.name}: {error}") from error

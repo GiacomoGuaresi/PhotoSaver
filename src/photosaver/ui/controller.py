@@ -20,6 +20,7 @@ from .history_trash import HistoryScreen, TrashScreen
 from .home import HomeScreen
 from .main_window import MainWindow
 from .prepare import PrepareFlow
+from .preview import PreviewScreen
 from .screen import Banner
 from .session import Session, disk_name
 from .viewer import ViewerScreen
@@ -263,7 +264,15 @@ class Controller(QObject):
         folders = {f for disk in disks for f in browse.disk_folders(disk.archive)}
         root = browse.build_tree(records, sorted(folders))
         self._home()
-        return self.window.open(ViewerScreen(root, disks))
+        viewer = self.window.open(ViewerScreen(root, disks))
+        viewer.open_requested.connect(lambda records, row: self.show_preview(disks, records, row))
+        return viewer
+
+    def show_preview(self, disks, records, row: int) -> PreviewScreen:
+        def sources(path: str):
+            return [disk.archive.joinpath(*path.split("/")) for disk in disks]
+
+        return self.window.open(PreviewScreen(records, row, sources))
 
     # History and trash
 
@@ -353,9 +362,12 @@ class Controller(QObject):
         for worker in list(self._workers):
             worker.cancel()
             worker.wait(10000)
-        screen = self.window.current
-        if isinstance(screen, ViewerScreen):
-            screen.loader.wait()
+        for index in range(self.window.stack.count()):
+            screen = self.window.stack.widget(index)
+            if isinstance(screen, ViewerScreen):
+                screen.loader.wait()
+            elif isinstance(screen, PreviewScreen):
+                screen.wait()
 
     def finish(self) -> None:
         self.stop_thumbnails()
