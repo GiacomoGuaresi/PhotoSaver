@@ -60,3 +60,18 @@ l'archivio deve contenere e com'è ogni copia su ogni disco.
   condivisa, poco affidabile su dischi rimovibili exFAT.
 - La copia dell'indice su un altro disco usa l'API di backup di SQLite e una
   rinomina atomica.
+
+## File `.photosaver-partial`
+
+Durante una copia, il file viene scritto come `.<nome>.photosaver-partial` nella
+cartella di destinazione. Prende il nome definitivo solo dopo:
+
+1. scrittura forzata sul disco (`fsync`);
+2. rilettura dal disco (su Linux scartando la cache) e confronto dell'hash con
+   quello della sorgente;
+3. impostazione della data di modifica originale.
+
+Un file `.photosaver-partial` rimasto sul disco indica una copia interrotta:
+non fa parte dell'archivio e la copia successiva lo sostituisce. La sorgente si
+legge una volta sola anche quando le destinazioni sono due (dischi A e B), e un
+file esistente non viene mai sovrascritto.
