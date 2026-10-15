@@ -11,6 +11,7 @@ from __future__ import annotations
 from PySide6.QtCore import QLocale, QObject, Signal
 
 from ..core import detect, status
+from .add_photos import AddPhotosFlow
 from .connect import BusyScreen, ConnectScreen, DoneScreen
 from .home import HomeScreen
 from .main_window import MainWindow
@@ -25,10 +26,10 @@ HOME = "home"
 READ_ONLY = "read_only"
 DONE = "done"
 PREPARE = "prepare"
+ADD = "add"
 
 
 class Controller(QObject):
-    add_requested = Signal()
     browse_requested = Signal()
     check_requested = Signal()  # the "Check the disks" flow
 
@@ -160,6 +161,21 @@ class Controller(QObject):
         self.mode = ""
         self.on_changed()
 
+    # Adding photos
+
+    def add_photos(self) -> None:
+        self.busy = True
+        self.mode = ADD
+        flow = AddPhotosFlow(self.window, list(self.disks), self.run, self)
+        flow.finished.connect(self._flow_finished)
+        flow.start()
+
+    def _flow_finished(self) -> None:
+        """Back from a flow that may have changed the disks: check again, then home."""
+        self.busy = False
+        self.mode = ""
+        self.on_changed()
+
     # Read-only
 
     def open_read_only(self) -> None:
@@ -183,7 +199,7 @@ class Controller(QObject):
         screen = self.window.current
         if not isinstance(screen, HomeScreen) or self.window.stack.count() != 1:
             screen = self.window.reset(HomeScreen())
-            screen.add_requested.connect(self.add_requested)
+            screen.add_requested.connect(self.add_photos)
             screen.browse_requested.connect(self.browse_requested)
             screen.check_requested.connect(self.check_requested)
         return screen

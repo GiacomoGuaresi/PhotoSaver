@@ -112,4 +112,100 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     ),
     "Done": "Fatto",
     "Next: Disk %1": "Avanti: Disco %1",
+    # Adding photos
+    "Choose the folders with the photos to add. You can also drag them here.": (
+        "Scegli le cartelle con le foto da aggiungere. Puoi anche trascinarle qui."
+    ),
+    "Choose a folder…": "Scegli una cartella…",
+    "This folder is already on the photo disks: choose one on the computer.": (
+        "Questa cartella è già sui dischi delle foto: scegline una sul computer."
+    ),
+    "Remove from the list": "Togli dall'elenco",
+    "Choose a folder of photos": "Scegli una cartella di foto",
+    "Where do you want to put these photos?": "Dove vuoi mettere queste foto?",
+    "In the folder:": "Nella cartella:",
+    "With the name:": "Con il nome:",
+    "%n photo(s)": ("%n foto", "%n foto"),
+    "%n video(s)": ("%n video", "%n video"),
+    "Change": "Cambia",
+    "They will go in: <b>%1</b>": "Andranno in: <b>%1</b>",
+    "They will go in your photos as they are, with their folders.": (
+        "Andranno tra le tue foto così come sono, con le loro cartelle."
+    ),
+    "%n photo(s) are already on the disks: I won't copy them again.": (
+        "%n foto è già sui dischi: non la copio di nuovo.",
+        "%n foto sono già sui dischi: non le copio di nuovo.",
+    ),
+    "%n photo(s) are already in your photos in another folder: I'll skip them.": (
+        "%n foto è già tra le tue foto in un'altra cartella: la salto.",
+        "%n foto sono già tra le tue foto in un'altra cartella: le salto.",
+    ),
+    "%n photo(s) have the same name as different photos already there: I'll save them with "
+    "a new name.": (
+        "%n foto ha lo stesso nome di una foto diversa già presente: la salvo con un nome nuovo.",
+        "%n foto hanno lo stesso nome di foto diverse già presenti: le salvo con un nome nuovo.",
+    ),
+    "%n file(s) are not photos or videos: they stay where they are.": (
+        "%n file non è una foto né un video: resta dov'è.",
+        "%n file non sono foto né video: restano dove sono.",
+    ),
+    "%n file(s) can't be read.": (
+        "%n file non si riesce a leggere.",
+        "%n file non si riescono a leggere.",
+    ),
+    "Here's what I'll do": "Ecco cosa farò",
+    "Copy also the photos that are already in another folder": (
+        "Copia anche le foto che sono già in un'altra cartella"
+    ),
+    "There is nothing new to copy: these photos are already safe.": (
+        "Non c'è niente di nuovo da copiare: queste foto sono già al sicuro."
+    ),
+    "Copy %n photo(s) to both disks": (
+        "Copia %n foto sui due dischi",
+        "Copia %n foto sui due dischi",
+    ),
+    "I'm looking at the photos…": "Sto guardando le foto…",
+    "It may take a while with many photos.": "Con tante foto può volerci un po'.",
+    "Stop": "Interrompi",
+    "I'm copying the photos to both disks…": "Sto copiando le foto sui due dischi…",
+    "Every photo is checked after copying. You can wait calmly, or stop and go on another time.": (
+        "Ogni foto viene controllata dopo la copia. Puoi aspettare tranquillamente, "
+        "oppure interrompere e continuare un'altra volta."
+    ),
+    "%1 left": "mancano %1",
+    "Done!": "Fatto!",
+    "Almost done": "Quasi fatto",
+    "%n photo(s) are now safe on both disks.": (
+        "%n foto ora è al sicuro su entrambi i dischi.",
+        "%n foto ora sono al sicuro su entrambi i dischi.",
+    ),
+    "%n file(s) could not be copied: they were changed or can't be read. They stay on the "
+    "computer.": (
+        "%n file non si è potuto copiare: è cambiato o non si legge. Resta sul computer.",
+        "%n file non si sono potuti copiare: sono cambiati o non si leggono. Restano sul computer.",
+    ),
+    "Do you want to delete the original folders from the computer? The photos are already "
+    "safe on the two disks.": (
+        "Vuoi cancellare le cartelle originali dal computer? Le foto sono già al sicuro "
+        "sui due dischi."
+    ),
+    "Keep them": "Tienile",
+    "Delete the originals": "Cancella gli originali",
+    "Copy stopped": "Copia interrotta",
+    "The photos copied so far are safe on both disks. To go on, add the same folders again: "
+    "I'll copy only what is missing.": (
+        "Le foto copiate finora sono al sicuro su entrambi i dischi. Per continuare, aggiungi "
+        "di nuovo le stesse cartelle: copierò solo quello che manca."
+    ),
+    "OK": "OK",
+    "Something went wrong": "Qualcosa non è andato",
+    "%1\n\nCheck that both disks are connected. The photos copied so far are safe; add the "
+    "same folders again to go on.": (
+        "%1\n\nControlla che entrambi i dischi siano collegati. Le foto copiate finora sono "
+        "al sicuro; aggiungi di nuovo le stesse cartelle per continuare."
+    ),
+    # Durations
+    "less than a minute": "meno di un minuto",
+    "about %n minute(s)": ("circa %n minuto", "circa %n minuti"),
+    "about %n hour(s)": ("circa %n ora", "circa %n ore"),
 }
