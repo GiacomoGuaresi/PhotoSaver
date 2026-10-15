@@ -10,7 +10,7 @@ from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator
 from PySide6.QtWidgets import QApplication
 
 from .. import __version__
-from ..core import detect
+from ..core import detect, volumes
 from . import theme
 from .controller import Controller
 from .main_window import MainWindow
@@ -65,10 +65,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def build(roots: list[Path]) -> tuple[MainWindow, Controller]:
+def build(roots: list[Path] | None) -> tuple[MainWindow, Controller]:
+    """``roots``: folders to look for disks in; None for the connected volumes, which are
+    also unmounted when the user is done."""
     window = MainWindow()
-    session = Session(lambda: roots, window)
-    controller = Controller(window, session, window)
+    provider = (lambda: roots) if roots is not None else volumes.mounted_roots
+    session = Session(provider, window)
+    controller = Controller(window, session, window, eject=roots is None)
     return window, controller
 
 
@@ -77,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv[1:])
     app = create_application(argv[:1])
     install_translations(app)
-    roots = args.disks if args.disks is not None else detect.configured_roots()
+    roots = args.disks if args.disks is not None else detect.configured_roots() or None
     window, controller = build(roots)
     window.show()
     controller.start()

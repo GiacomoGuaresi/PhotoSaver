@@ -136,3 +136,46 @@ def test_busy_screen_progress(qtbot):
     qtbot.addWidget(screen)
     screen.set_progress(5, 10, "half")
     assert screen.bar.value() == 500 and screen.detail.text() == "half"
+
+
+def test_done_unmounts_real_disks(qtbot, two_disks, monkeypatch):
+    from photosaver.core import volumes
+    from photosaver.ui.controller import Controller
+
+    roots = [d.root for d in two_disks]
+    monkeypatch.setattr(volumes, "mounted_roots", lambda: roots)
+    asked = []
+    answers = {two_disks[0].root: True, two_disks[1].root: False}
+
+    def fake_eject(root):
+        asked.append(root)
+        return answers[root]
+
+    monkeypatch.setattr(volumes, "eject", fake_eject)
+    app_mod.create_application([])
+    window, controller = app_mod.build(None)
+    qtbot.addWidget(window)
+    assert isinstance(controller, Controller) and controller.eject
+    controller.start()
+    qtbot.waitUntil(lambda: controller.mode == HOME)
+    window.disk_bar.done.click()
+    screen = window.current
+    assert asked == roots and "Disk 2" in screen.subtitle.text()
+    answers[two_disks[1].root] = True
+    retry = [
+        b for b in screen.footer.findChildren(type(screen.back_button)) if b.text() == "Try again"
+    ]
+    retry[0].click()
+    assert asked[-1] == two_disks[1].root and len(asked) == 3
+    assert window.current.title.text() == "You can unplug the disks now"
+    controller.shutdown()
+
+
+def test_dev_disks_are_not_unmounted(qtbot, ui, roots, two_disks, monkeypatch):
+    from photosaver.core import volumes
+
+    monkeypatch.setattr(volumes, "eject", lambda root: pytest.fail("ejected"))
+    window, controller = ui
+    roots.extend(d.root for d in two_disks)
+    start_and_wait_home(qtbot, ui)
+    window.disk_bar.done.click()

@@ -456,4 +456,11 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
         "Spostare %n foto nel cestino? Potrai recuperarla dal cestino per 30 giorni.",
         "Spostare %n foto nel cestino? Potrai recuperarle dal cestino per 30 giorni.",
     ),
+    # Unplugging
+    "Wait before unplugging": "Aspetta prima di scollegare",
+    "I can't unplug Disk %1 safely: close the windows that use it, then try again.": (
+        "Non riesco a scollegare il Disco %1 in sicurezza: chiudi le finestre che lo usano, "
+        "poi riprova."
+    ),
+    "Try again": "Riprova",
 }

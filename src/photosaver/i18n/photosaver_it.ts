@@ -345,127 +345,142 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
 <context>
     <name>Controller</name>
     <message>
-        <location filename="../ui/controller.py" line="56" />
+        <location filename="../ui/controller.py" line="64" />
         <source>History</source>
         <translation>Storico</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="58" />
+        <location filename="../ui/controller.py" line="66" />
         <source>Trash</source>
         <translation>Cestino</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="152" />
+        <location filename="../ui/controller.py" line="160" />
         <source>Disk %1</source>
         <translation>Disco %1</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="155" />
+        <location filename="../ui/controller.py" line="163" />
         <source>not connected</source>
         <translation>non collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="158" />
+        <location filename="../ui/controller.py" line="166" />
         <source>connected</source>
         <translation>collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="161" />
+        <location filename="../ui/controller.py" line="169" />
         <source>connected · %1 free</source>
         <translation>collegato · %1 liberi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="170" />
+        <location filename="../ui/controller.py" line="178" />
         <source>Perfect, both disks are here</source>
         <translation>Perfetto, ho trovato entrambi i dischi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="171" />
+        <location filename="../ui/controller.py" line="179" />
         <source>I'm checking that all the photos are fine… it takes a few seconds.</source>
         <translation>Sto controllando che le foto siano tutte a posto… ci vuole qualche secondo.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="188" />
+        <location filename="../ui/controller.py" line="196" />
         <source>Last time something was interrupted. Your photos are safe: I'll fix it.</source>
         <translation>L'ultima volta qualcosa si è interrotto. Le tue foto sono al sicuro: sistemo io.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="190" />
+        <location filename="../ui/controller.py" line="198" />
         <source>Fix</source>
         <translation>Sistema</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/controller.py" line="195" />
+        <location filename="../ui/controller.py" line="203" />
         <source>I found %n thing(s) to sort out on the disks.</source>
         <translation><numerusform>Ho trovato %n cosa da sistemare sui dischi.</numerusform><numerusform>Ho trovato %n cose da sistemare sui dischi.</numerusform></translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="197" />
+        <location filename="../ui/controller.py" line="205" />
         <source>Let's look together</source>
         <translation>Vediamo insieme</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="202" />
+        <location filename="../ui/controller.py" line="210" />
         <source>Some files can't be read. Run a check of the disks.</source>
         <translation>Alcuni file non si riescono a leggere. Fai un controllo dei dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="204" />
+        <location filename="../ui/controller.py" line="212" />
         <source>Check</source>
         <translation>Controlla</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="208" />
+        <location filename="../ui/controller.py" line="216" />
         <source>Your photos are safe on both disks.</source>
         <translation>Le tue foto sono al sicuro su entrambi i dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="216" />
+        <location filename="../ui/controller.py" line="224" />
         <source>I'm finishing what was interrupted…</source>
         <translation>Sto completando quello che si era interrotto…</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="312" />
+        <location filename="../ui/controller.py" line="320" />
         <source>There is already something with this name here.</source>
         <translation>Qui c'è già qualcosa con questo nome.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="313" />
+        <location filename="../ui/controller.py" line="321" />
         <source>This name can't be used.</source>
         <translation>Questo nome non si può usare.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="314" />
+        <location filename="../ui/controller.py" line="322" />
         <source>A name can't contain these signs: / \ : * ? " &lt; &gt; |</source>
         <translation>Un nome non può contenere questi segni: / \ : * ? " &lt; &gt; |</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="315" />
+        <location filename="../ui/controller.py" line="323" />
         <source>A folder can't be moved inside itself.</source>
         <translation>Una cartella non si può spostare dentro se stessa.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="319" />
+        <location filename="../ui/controller.py" line="327" />
         <source>Not possible</source>
         <translation>Non si può</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="320" />
+        <location filename="../ui/controller.py" line="328" />
         <source>The change could not be made: %1</source>
         <translation>Non è stato possibile fare la modifica: %1</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="367" />
+        <location filename="../ui/controller.py" line="375" />
         <source>Some photos could not be restored: a photo with the same name is already there.</source>
         <translation>Alcune foto non si sono potute ripristinare: c'è già una foto con lo stesso nome.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="393" />
+        <location filename="../ui/controller.py" line="401" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation>Stai guardando solo il Disco %1. Per aggiungere foto collega anche il Disco %2.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="450" />
+        <location filename="../ui/controller.py" line="449" />
+        <source>Wait before unplugging</source>
+        <translation>Aspetta prima di scollegare</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="451" />
+        <source>I can't unplug Disk %1 safely: close the windows that use it, then try again.</source>
+        <translation>Non riesco a scollegare il Disco %1 in sicurezza: chiudi le finestre che lo usano, poi riprova.</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="454" />
+        <source>Try again</source>
+        <translation>Riprova</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="473" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation>Qualcosa non è andato, le tue foto non sono state toccate: %1</translation>
     </message>
@@ -767,7 +782,12 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <translation>Caricamento…</translation>
     </message>
     <message>
-        <location filename="../ui/preview.py" line="262" />
+        <location filename="../ui/preview.py" line="239" />
+        <source>This video can't be played on this computer.</source>
+        <translation>Questo video non si riesce a riprodurre su questo computer.</translation>
+    </message>
+    <message>
+        <location filename="../ui/preview.py" line="269" />
         <source>This photo can't be opened: it may be damaged.</source>
         <translation>Questa foto non si riesce ad aprire: potrebbe essere rovinata.</translation>
     </message>

@@ -19,7 +19,10 @@ uv run python -m photosaver --disks dev-disks/disk-a dev-disks/disk-b
 ```
 
 `--disks` (o la variabile `PHOTOSAVER_DISKS`, percorsi separati da `:`) dice
-dove cercare i dischi: il riconoscimento dei volumi veri arriva con M5. L'app
+dove cercare i dischi. Senza, l'app guarda i volumi collegati (Linux: i punti di
+montaggio sotto `/run/media`, `/media`, `/mnt`; macOS: `/Volumes`; Windows: le
+unità tranne quella di sistema) e con "Ho finito" li smonta; i dischi
+simulati invece non vengono mai smontati. L'app
 li ricontrolla ogni 1,5 s, quindi per **scollegare un disco** basta rinominare
 la cartella (`mv dev-disks/disk-b dev-disks/disk-b.off`) e per ricollegarlo
 rimetterle il nome. Con `--disks` su una cartella vuota si prova il "disco nuovo".

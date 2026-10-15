@@ -11,7 +11,7 @@ from __future__ import annotations
 from PySide6.QtCore import QLocale, QObject
 from PySide6.QtWidgets import QMessageBox
 
-from ..core import browse, detect, edit, status, thumbs, trash
+from ..core import browse, detect, edit, status, thumbs, trash, volumes
 from ..core.archive import Archive
 from . import theme
 from .add_photos import AddPhotosFlow
@@ -39,8 +39,16 @@ CHECK = "check"
 
 
 class Controller(QObject):
-    def __init__(self, window: MainWindow, session: Session, parent: QObject | None = None):
+    def __init__(
+        self,
+        window: MainWindow,
+        session: Session,
+        parent: QObject | None = None,
+        *,
+        eject: bool = False,
+    ):
         super().__init__(parent)
+        self.eject = eject  # real volumes: unmount them when the user is done
         self.window = window
         self.session = session
         self.mode = ""
@@ -428,7 +436,22 @@ class Controller(QObject):
             worker.wait(5000)
         self.session.stop()
         self.mode = DONE
-        self.window.reset(DoneScreen())
+        self._eject(list(self.disks))
+
+    def _eject(self, disks) -> None:
+        screen = self.window.reset(DoneScreen())
+        if not self.eject:
+            return
+        refused = [disk for disk in disks if not volumes.eject(disk.root)]
+        if refused:
+            names = ", ".join(disk_name(d.label) for d in refused)
+            screen.set_texts(
+                self.tr("Wait before unplugging"),
+                self.tr(
+                    "I can't unplug Disk %1 safely: close the windows that use it, then try again."
+                ).replace("%1", names),
+            )
+            screen.add_secondary(self.tr("Try again"), lambda: self._eject(refused))
 
     # Background work
 
