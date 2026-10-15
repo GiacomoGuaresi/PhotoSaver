@@ -4,6 +4,7 @@ python -m photosaver.cli init  DISK --label A [--archive-dir Foto]
 python -m photosaver.cli init  DISK --label B --join OTHER_DISK
 python -m photosaver.cli scan  FOLDER
 python -m photosaver.cli status DISK
+python -m photosaver.cli upload --disks A B --dest "FOTO 2026/MARE" FOLDER [--apply]
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from .core import archive, scanner
+from .core import archive, scanner, upload
 from .core.disk import DiskError, open_disk
 
 SHOWN = 10  # list items shown before "… and N more"
@@ -35,9 +36,17 @@ def main(argv: list[str] | None = None) -> int:
     status = commands.add_parser("status", help="show a disk and its index")
     status.add_argument("disk", type=Path)
 
+    up = commands.add_parser("upload", help="plan an upload, and apply it with --apply")
+    up.add_argument("folders", type=Path, nargs="+")
+    up.add_argument("--disks", type=Path, nargs="+", required=True)
+    up.add_argument("--dest", help="archive folder (default: proposed)")
+    up.add_argument("--apply", action="store_true", help="copy (default: only show the plan)")
+    up.add_argument("--delete-sources", action="store_true", help="after a complete upload")
+
     args = parser.parse_args(argv)
+    commands_ = {"init": _init, "scan": _scan, "status": _status, "upload": _upload}
     try:
-        return {"init": _init, "scan": _scan, "status": _status}[args.command](args)
+        return commands_[args.command](args)
     except (DiskError, OSError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
@@ -82,6 +91,38 @@ def _status(args) -> int:
             where = f" {event.path}" if event.path else ""
             print(f"  {event.at}  {event.kind}{where}")
     return 0
+
+
+def _upload(args) -> int:
+    with archive.Archive.open([open_disk(path) for path in args.disks]) as arch:
+        plan = upload.analyze(args.folders)
+        top = upload.top_level_folders(arch)
+        for folder in plan.folders:
+            folder.destination = (
+                args.dest if args.dest is not None else (upload.propose_destination(folder, top))
+            )
+        upload.resolve(plan, arch)
+        for folder in plan.folders:
+            print(f"{folder.source.name}  →  {folder.destination or '(archive root)'}")
+            statuses = Counter(item.status for item in folder.items)
+            print("  " + ", ".join(f"{n} {status}" for status, n in sorted(statuses.items())))
+            if folder.ignored:
+                print(f"  {len(folder.ignored)} ignored (not photos or videos)")
+        for item in plan.items:
+            if item.status in (upload.CONFLICT, upload.DUPLICATE):
+                print(f"  {item.status}: {item.relative} → {item.action} {item.target}")
+        print(f"To copy: {len(plan.to_copy())} files, {_size(plan.copy_size)}")
+        if not args.apply:
+            return 0
+
+        result = upload.apply(plan, arch)
+        print(f"Copied and verified on {len(arch.disks)} disks: {len(result.copied)} files")
+        for item, reason in result.failed:
+            print(f"  failed: {item.relative}: {reason}")
+        if args.delete_sources and not result.failed:
+            cleanup = upload.delete_sources(plan, arch)
+            print(f"Deleted {len(cleanup.deleted)} originals, kept {len(cleanup.kept)}")
+        return 1 if result.failed else 0
 
 
 def _print_list(title: str, items: list[str]) -> None:

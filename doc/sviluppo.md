@@ -20,6 +20,8 @@ uv run python -m photosaver.cli init dev-disks/disk-a --label A
 uv run python -m photosaver.cli init dev-disks/disk-b --label B --join dev-disks/disk-a
 uv run python -m photosaver.cli status dev-disks/disk-a
 uv run python -m photosaver.cli scan dev-disks/desktop
+uv run python -m photosaver.cli upload dev-disks/desktop/"MARE 2026" \
+    --disks dev-disks/disk-a dev-disks/disk-b [--apply] [--delete-sources]
 ```
 
 ## Dischi simulati

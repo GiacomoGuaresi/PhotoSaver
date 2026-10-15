@@ -97,6 +97,15 @@ seconda copia andrebbe fatto a mano.
    tempo stimato, pausa/annulla. Se si interrompe, riprende da dove era rimasta.
 5. **Riepilogo** → "Copia verificata su entrambi i dischi. Eliminare le
    cartelle originali?" [Elimina] [Tieni].
+   Si eliminano solo i file il cui contenuto è nell'indice come integro su
+   **tutti** i dischi e che non sono cambiati dopo l'analisi. Restano i file
+   ignorati (non foto), quelli saltati per un conflitto di nome e le
+   cartelle non vuote.
+
+**Ripresa**: rifare analisi e caricamento riprende da dove si era interrotto.
+I file già copiati risultano "già presenti"; un file trovato sul disco ma non
+ancora nell'indice (interruzione tra copia e registrazione) viene verificato
+con l'hash e adottato, senza ricopiarlo.
 
 ## 4. Check
 

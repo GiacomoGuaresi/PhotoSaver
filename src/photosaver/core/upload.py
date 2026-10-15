@@ -13,15 +13,20 @@ A file in the archive is never overwritten by an upload.
 
 from __future__ import annotations
 
+import contextlib
+import os
 import re
+import time
+import uuid
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path, PurePosixPath
 
-from . import dates, hashing, scanner
-from .archive import Archive
+from . import dates, hashing, safecopy, scanner
+from .archive import Archive, ArchiveError
+from .index import OK, FileRecord, now
 
 # Item status
 NEW = "new"  # will be copied
@@ -249,3 +254,162 @@ def _join(destination: str, relative: str) -> str:
 def _key(path: str) -> str:
     """Comparison key for archive paths: exFAT ignores letter case."""
     return path.casefold()
+
+
+# Applying the plan
+
+SYNC_EVERY = 30.0  # seconds between copies of the index to the other disks
+
+
+@dataclass
+class Result:
+    copied: list[Item] = field(default_factory=list)
+    failed: list[tuple[Item, str]] = field(default_factory=list)
+
+
+def apply(
+    plan: Plan,
+    archive: Archive,
+    *,
+    on_progress: Callable[[int, int], None] | None = None,
+    should_stop: Callable[[], bool] | None = None,
+) -> Result:
+    """Copy the plan's files to every disk, verified, and record them in the index.
+
+    Can be interrupted at any point: analyzing and resolving again, then applying, resumes
+    the upload (files already copied are found in the index, or adopted from the disks).
+    Files that fail (changed since the analysis, unreadable…) are reported and skipped;
+    an error on a disk stops the upload.
+    """
+    if not archive.complete:
+        raise ArchiveError(f"connect all the disks first: {', '.join(archive.missing)}")
+    items = plan.to_copy()
+    total = sum(item.size for item in items)
+    done = 0
+    result = Result()
+    operation = uuid.uuid4().hex[:12]
+    last_sync = time.monotonic()
+
+    def advance(read: int) -> None:
+        nonlocal done
+        done += read
+        if on_progress:
+            on_progress(done, total)
+
+    try:
+        for item in items:
+            before = done
+            try:
+                _copy_item(item, archive, advance, should_stop)
+            except (safecopy.SourceChanged, safecopy.VerifyFailed, FileExistsError) as error:
+                result.failed.append((item, str(error)))
+            except OSError as error:
+                if not item.source.exists() or error.filename == str(item.source):
+                    result.failed.append((item, error.strerror or str(error)))
+                else:
+                    raise
+            else:
+                with archive.index.transaction():
+                    archive.index.put_file(
+                        FileRecord(item.target, item.size, item.mtime_ns, item.hash)
+                    )
+                    for disk in archive.disks:
+                        archive.index.set_copy(item.target, disk.id, OK, verified_at=now())
+                    archive.index.log(
+                        "upload", path=item.target, op=operation, source=str(item.source)
+                    )
+                result.copied.append(item)
+            # Failed or partial items still count, so the progress always reaches the end
+            advance(item.size - (done - before))
+            if time.monotonic() - last_sync > SYNC_EVERY:
+                archive.sync_indexes()
+                last_sync = time.monotonic()
+    finally:
+        with archive.index.transaction():
+            archive.index.log(
+                "upload_done",
+                op=operation,
+                folders=[str(f.source) for f in plan.folders],
+                copied=len(result.copied),
+                failed=len(result.failed),
+                size=sum(item.size for item in result.copied),
+                complete=len(result.copied) + len(result.failed) == len(items),
+            )
+        archive.sync_indexes()
+    return result
+
+
+def _copy_item(item: Item, archive: Archive, advance, should_stop) -> None:
+    pending = []
+    for disk in archive.disks:
+        destination = archive.path_on(disk, item.target)
+        if not destination.exists():
+            pending.append(destination)
+        elif hashing.hash_file(destination, should_stop=should_stop) == item.hash:
+            # Already there (an interrupted upload, or copied by hand): adopt it
+            os.utime(destination, ns=(destination.stat().st_atime_ns, item.mtime_ns))
+        else:
+            raise FileExistsError(f"{destination} exists with a different content")
+    if pending:
+        safecopy.safe_copy(
+            item.source,
+            pending,
+            expected_hash=item.hash,
+            on_progress=advance,
+            should_stop=should_stop,
+        )
+
+
+# Deleting the originals
+
+
+@dataclass
+class Cleanup:
+    deleted: list[Path] = field(default_factory=list)
+    kept: list[tuple[Path, str]] = field(default_factory=list)
+
+
+def delete_sources(plan: Plan, archive: Archive) -> Cleanup:
+    """Delete the uploaded originals whose content is safe on every disk of the archive.
+
+    A file is deleted only if the index has a file with its hash, recorded as good on
+    all the archive's disks, and it has not changed since the analysis. Everything else
+    (files skipped for a name conflict, failed copies, ignored files) stays, and so do the
+    folders that are not empty.
+    """
+    disk_ids = {d.id for d in archive.index.disks()}
+    cleanup = Cleanup()
+    for item in plan.items:
+        reason = _unsafe_to_delete(item, archive, disk_ids)
+        if reason:
+            cleanup.kept.append((item.source, reason))
+            continue
+        try:
+            item.source.unlink()
+        except OSError as error:
+            cleanup.kept.append((item.source, error.strerror or str(error)))
+        else:
+            cleanup.deleted.append(item.source)
+    for folder in plan.folders:
+        _remove_empty_folders(folder.source)
+    return cleanup
+
+
+def _unsafe_to_delete(item: Item, archive: Archive, disk_ids: set[str]) -> str | None:
+    try:
+        stat = item.source.stat()
+    except OSError:
+        return "not found"
+    if (stat.st_size, stat.st_mtime_ns) != (item.size, item.mtime_ns):
+        return "changed since the upload"
+    for record in archive.index.files_with_hash(item.hash):
+        copies = archive.index.copies(record.path)
+        if all(copies.get(d) is not None and copies[d].state == OK for d in disk_ids):
+            return None
+    return "not in the archive"
+
+
+def _remove_empty_folders(root: Path) -> None:
+    for folder, _, _ in sorted(os.walk(root), key=lambda w: -len(w[0])):
+        with contextlib.suppress(OSError):
+            os.rmdir(folder)  # fails, as wanted, when not empty

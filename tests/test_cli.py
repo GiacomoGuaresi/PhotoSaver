@@ -63,3 +63,23 @@ def test_errors_are_reported(tmp_path, capsys):
 @pytest.mark.parametrize(("size", "text"), [(0, "0 B"), (1500, "1.5 KB"), (4.2e9, "4.2 GB")])
 def test_size(size, text):
     assert cli._size(size) == text
+
+
+def test_upload(dev, capsys):
+    a, b = str(dev / "disk-a"), str(dev / "disk-b")
+    cli.main(["init", a, "--label", "A"])
+    cli.main(["init", b, "--label", "B", "--join", a])
+    sea = str(dev / "desktop" / "MARE 2026")
+    capsys.readouterr()
+
+    assert cli.main(["upload", sea, "--disks", a, b]) == 0
+    out = capsys.readouterr().out
+    assert "MARE 2026  →  2026/MARE 2026" in out
+    assert "To copy: 33 files" in out
+    assert not (dev / "disk-a" / "Foto" / "2026").exists()
+
+    assert cli.main(["upload", sea, "--disks", a, b, "--apply", "--delete-sources"]) == 0
+    out = capsys.readouterr().out
+    assert "Copied and verified on 2 disks: 33 files" in out
+    assert "Deleted 33 originals" in out
+    assert (dev / "disk-b" / "Foto" / "2026" / "MARE 2026" / "Spiaggia").is_dir()
