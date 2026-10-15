@@ -7,7 +7,8 @@ cartella dell'archivio, leggibili anche senza l'app.
 <disco>/
 ├── .photosaver/
 │   ├── disk.json        identità del disco
-│   └── index.sqlite     indice dell'archivio
+│   ├── index.sqlite     indice dell'archivio
+│   └── cestino/         file cancellati o sostituiti dall'app
 └── <cartella archivio>/ le foto (es. Foto/)
 ```
 
@@ -49,6 +50,8 @@ l'archivio deve contenere e com'è ogni copia su ogni disco.
 | `files` | un record per file: percorso relativo alla cartella archivio (con `/`), dimensione, data di modifica (ns), hash, data di aggiunta |
 | `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`, `modified`) e data dell'ultima verifica del contenuto |
 | `events` | storico delle operazioni: data, tipo, percorso, disco, dettagli JSON |
+| `trash` | file nel cestino di ogni disco: percorso originale, posizione nel cestino, dimensione, data, hash, motivo (`deleted`, `replaced`) |
+| `known_issues` | differenze segnate come note: percorso, disco, tipo, hash visto (se il file cambia ancora, torna a essere segnalato) |
 
 - I dischi sono **righe, non colonne**: una terza copia non cambia lo schema.
 - **Versione dello schema** in `PRAGMA user_version`; all'apertura l'app applica
@@ -75,3 +78,19 @@ Un file `.photosaver-partial` rimasto sul disco indica una copia interrotta:
 non fa parte dell'archivio e la copia successiva lo sostituisce. La sorgente si
 legge una volta sola anche quando le destinazioni sono due (dischi A e B), e un
 file esistente non viene mai sovrascritto.
+
+## Cestino
+
+Ogni disco ha il suo cestino, `.photosaver/cestino/`: spostarci un file è una
+semplice rinomina sullo stesso disco, quindi è immediato.
+
+```
+.photosaver/cestino/20261015T190000-1a2b3c/FOTO 2026/MARE 2026/a.jpg
+                    └ data e lotto ──────┘└ percorso originale ───────┘
+```
+
+- **Ripristina**: il file torna al suo posto (mai sopra un file esistente); se
+  l'archivio non lo elencava più, viene rimesso nell'indice e gli altri dischi
+  lo riceveranno al check successivo.
+- **Svuota**: a mano, oppure solo i file più vecchi di N giorni (30 di default).
+  I file sui dischi non collegati restano finché il disco non viene collegato.

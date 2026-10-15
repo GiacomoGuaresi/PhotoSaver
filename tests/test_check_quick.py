@@ -107,3 +107,30 @@ def test_unreadable_folder_is_an_error_not_missing(filled):
         path.parent.chmod(0o755)
     assert report.differences == []
     assert report.errors == [(disk.id, "FOTO 2026/MARE 2026", "Permission denied")]
+
+
+def test_known_issues_are_hidden_until_the_file_changes(filled):
+    _, path = on(filled, "A", "FOTO 2026/MARE 2026/a.jpg")
+    stat = path.stat()
+    path.write_bytes(b"x")
+    os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    (diff,) = check.quick_check(filled).differences
+
+    check.mark_known(filled, diff)
+    report = check.quick_check(filled)
+    assert report.clean and report.known == 1
+
+    path.write_bytes(b"y")  # damaged differently: reported again
+    os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    assert len(check.quick_check(filled).differences) == 1
+
+    check.unmark_known(filled, diff)
+    assert check.quick_check(filled).known == 0
+
+
+def test_known_missing_file(filled):
+    _, path = on(filled, "B", "FOTO 2025/c.mp4")
+    path.unlink()
+    (diff,) = check.quick_check(filled).differences
+    check.mark_known(filled, diff)
+    assert check.full_check(filled).known == 1

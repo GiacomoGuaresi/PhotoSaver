@@ -60,6 +60,7 @@ class Report:
     disks: list[str] = field(default_factory=list)  # ids of the checked disks
     files: int = 0  # files in the index
     errors: list[tuple[str, str, str]] = field(default_factory=list)  # (disk id, path, reason)
+    known: int = 0  # differences not listed because marked as known
 
     def of_kind(self, kind: str) -> list[Difference]:
         return [d for d in self.differences if d.kind == kind]
@@ -164,6 +165,7 @@ def quick_check(
         if on_progress:
             on_progress(n + 1, len(archive.disks))
     detect_moves(report, records)
+    _drop_known(archive, report)
     return report
 
 
@@ -265,7 +267,37 @@ def full_check(
         raise hashing.Cancelled("full check interrupted")
     _finish_run(archive, report)
     detect_moves(report, records)
+    _drop_known(archive, report)
     return report
+
+
+def mark_known(archive: Archive, diff: Difference) -> None:
+    """Stop reporting this difference, until the file changes again."""
+    with archive.index.transaction():
+        archive.index.add_known(diff.path, diff.disk_id, diff.kind, diff.hash)
+        archive.index.log("marked_known", path=diff.path, disk_id=diff.disk_id, issue=diff.kind)
+
+
+def unmark_known(archive: Archive, diff: Difference) -> None:
+    with archive.index.transaction():
+        archive.index.remove_known(diff.path, diff.disk_id, diff.kind)
+
+
+def _drop_known(archive: Archive, report: Report) -> None:
+    known = archive.index.known()
+    if not known:
+        return
+
+    def is_known(diff: Difference) -> bool:
+        key = (diff.path, diff.disk_id, diff.kind)
+        if key not in known:
+            return False
+        seen = known[key]
+        return seen is None or diff.hash is None or seen == diff.hash
+
+    kept = [d for d in report.differences if not is_known(d)]
+    report.known = len(report.differences) - len(kept)
+    report.differences = kept
 
 
 def detect_moves(report: Report, records: dict[str, FileRecord]) -> None:

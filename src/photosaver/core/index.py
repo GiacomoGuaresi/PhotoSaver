@@ -68,6 +68,28 @@ MIGRATIONS: list[str] = [
     );
     CREATE INDEX events_at ON events (at);
     """,
+    # 2: trash and known issues
+    """
+    CREATE TABLE trash (
+        id         INTEGER PRIMARY KEY,
+        disk_id    TEXT NOT NULL,
+        path       TEXT NOT NULL,  -- where the file was, in the archive
+        stored     TEXT NOT NULL,  -- where it is, inside .photosaver/cestino/
+        size       INTEGER NOT NULL,
+        mtime_ns   INTEGER NOT NULL,
+        hash       TEXT,
+        trashed_at TEXT NOT NULL,
+        reason     TEXT NOT NULL
+    );
+    CREATE TABLE known_issues (
+        path     TEXT NOT NULL,
+        disk_id  TEXT NOT NULL,
+        kind     TEXT NOT NULL,
+        hash     TEXT,  -- content seen when marked: a new change is reported again
+        noted_at TEXT NOT NULL,
+        PRIMARY KEY (path, disk_id, kind)
+    );
+    """,
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 
@@ -104,6 +126,19 @@ class DiskRecord:
 class Copy:
     state: str
     verified_at: str | None
+
+
+@dataclass(frozen=True)
+class TrashEntry:
+    id: int | None
+    disk_id: str
+    path: str
+    stored: str
+    size: int
+    mtime_ns: int
+    hash: str | None
+    trashed_at: str
+    reason: str
 
 
 @dataclass(frozen=True)
@@ -329,6 +364,51 @@ class Index:
             Event(at, kind, path, disk_id, json.loads(detail) if detail else {})
             for at, kind, path, disk_id, detail in rows
         ]
+
+    # Trash
+
+    def add_trash(self, entry: TrashEntry) -> int:
+        cursor = self._write(
+            """
+            INSERT INTO trash (disk_id, path, stored, size, mtime_ns, hash, trashed_at, reason)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                entry.disk_id, entry.path, entry.stored, entry.size, entry.mtime_ns,
+                entry.hash, entry.trashed_at or now(), entry.reason,
+            ),
+        )  # fmt: skip
+        return cursor.lastrowid
+
+    def trash(self, disk_id: str | None = None) -> list[TrashEntry]:
+        """Most recent first."""
+        sql = "SELECT * FROM trash" + (" WHERE disk_id = ?" if disk_id else "")
+        rows = self._db.execute(
+            sql + " ORDER BY trashed_at DESC, id DESC", (disk_id,) if disk_id else ()
+        )
+        return [TrashEntry(*row) for row in rows]
+
+    def remove_trash(self, entry_id: int) -> None:
+        self._write("DELETE FROM trash WHERE id = ?", (entry_id,))
+
+    # Known issues
+
+    def add_known(self, path: str, disk_id: str, kind: str, hash_: str | None) -> None:
+        self._write(
+            "INSERT OR REPLACE INTO known_issues VALUES (?, ?, ?, ?, ?)",
+            (path, disk_id, kind, hash_, now()),
+        )
+
+    def known(self) -> dict[tuple[str, str, str], str | None]:
+        """(path, disk id, kind) → hash seen when marked."""
+        rows = self._db.execute("SELECT path, disk_id, kind, hash FROM known_issues")
+        return {(path, disk_id, kind): hash_ for path, disk_id, kind, hash_ in rows}
+
+    def remove_known(self, path: str, disk_id: str, kind: str) -> None:
+        self._write(
+            "DELETE FROM known_issues WHERE path = ? AND disk_id = ? AND kind = ?",
+            (path, disk_id, kind),
+        )
 
     # Copying the index to another disk
 
