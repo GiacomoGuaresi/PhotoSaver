@@ -130,6 +130,25 @@ i dischi simulati:
 
 ### Cosa le cartelle locali non simulano
 
+Per provare su **exFAT vero** senza dischi (Linux, senza root):
+
+```sh
+eval "$(uv run python scripts/exfat_loop.py up)"   # due immagini exFAT montate in loop
+uv run pytest tests/test_exfat.py
+uv run python scripts/exfat_loop.py down
+```
+
+La CI fa lo stesso a ogni commit (job `exfat`). Cosa è emerso:
+
+- i nomi ignorano maiuscole e minuscole: `Foto.jpg` = `FOTO.JPG`;
+- le date si salvano al centesimo di secondo (la tolleranza del controllo
+  veloce è 2 s);
+- rinominare cambiando solo le maiuscole (`mare` → `MARE`) con una sola
+  rinomina non ha effetto: l'app la fa in due passi;
+- i permessi Unix sono ignorati.
+
+Restano da provare con un disco USB vero: velocità e disco staccato a metà.
+
 Il disco di sviluppo è ext4, non exFAT. Restano da provare sui dischi veri, o
 con un'**immagine exFAT montata in loop** (es. un file da 1 GB) come passaggio
 intermedio:

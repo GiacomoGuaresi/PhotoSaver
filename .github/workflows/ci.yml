@@ -30,3 +30,22 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --locked
       - run: uv run pytest
+
+  exfat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y exfatprogs
+      - name: Mount two exFAT test disks
+        run: |
+          for n in 1 2; do
+            truncate -s 128M "$RUNNER_TEMP/disk$n.img"
+            mkfs.exfat -L "PSTEST$n" "$RUNNER_TEMP/disk$n.img"
+            sudo mkdir -p "/mnt/pstest$n"
+            sudo mount -o "loop,uid=$(id -u),gid=$(id -g)" "$RUNNER_TEMP/disk$n.img" "/mnt/pstest$n"
+          done
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run pytest tests/test_exfat.py -v
+        env:
+          PHOTOSAVER_EXFAT: /mnt/pstest1:/mnt/pstest2

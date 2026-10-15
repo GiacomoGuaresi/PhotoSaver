@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .disk import Disk, init_disk
+from .disk import Disk, init_disk, open_disk  # noqa: F401 (re-exported)
 from .index import INDEX_FILE, Index
 
 

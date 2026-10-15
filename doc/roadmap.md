@@ -82,7 +82,7 @@ menu "Altro".
 | # | Step | Commit | Stato |
 |---|---|---|---|
 | 5.1 | Riconoscimento automatico dei dischi collegati (volumi montati) + collegamento/scollegamento a caldo | `feat(disks): volume detection` | ✅ |
-| 5.2 | Test su **immagine exFAT** montata in loop: maiuscole/minuscole, precisione delle date | `test: exfat behaviour` | ⬜ |
+| 5.2 | Test su **immagine exFAT** montata in loop: maiuscole/minuscole, precisione delle date | `test: exfat behaviour` | ✅ |
 | 5.3 | **Formattazione exFAT** nella procedura guidata (Linux, Windows) con permessi di amministratore | `feat(disks): exfat formatting` | ⬜ |
 | 5.4 | **Sostituisci disco**: nuovo disco + copia completa verificata dal disco sano | `feat(disks): replace disk` | ⬜ |
 | 5.5 | **Promemoria** per il check completo + prestazioni su USB (letture in parallelo, stima dei tempi) | `feat(check): reminder and usb performance` | ⬜ |
