@@ -19,6 +19,7 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 from . import hashing, scanner
 from .archive import Archive
@@ -184,12 +185,12 @@ def full_check(
     """
     index = archive.index
     records = {record.path: record for record in index.files()}
-    started = _start_run(archive)
+    started, resumed = _start_run(archive)
     report = Report(disks=[d.id for d in archive.disks], files=len(records))
 
     skips: dict[str, frozenset[str]] = {}
     for disk in archive.disks:
-        copies = index.copies_on(disk.id)
+        copies = index.copies_on(disk.id) if resumed else {}
         done = {p for p, c in copies.items() if c.verified_at and c.verified_at >= started}
         skips[disk.id] = frozenset(done & records.keys())
         for path in skips[disk.id]:  # problems found before the interruption
@@ -334,25 +335,34 @@ _STATE_OF_KIND = {MISSING: STATE_MISSING, CORRUPT: STATE_CORRUPT, MODIFIED: STAT
 _KIND_OF_STATE = {state: kind for kind, state in _STATE_OF_KIND.items()}
 
 
-def _start_run(archive: Archive) -> str:
-    """Start a full check, or resume the interrupted one on the same disks."""
+def _start_run(archive: Archive) -> tuple[str, bool]:
+    """Start a full check, or resume the interrupted one on the same disks.
+
+    Returns when it started and whether it is a resume. The start time is precise to the
+    microsecond: copies verified (to the second) in the same second count as not verified.
+    """
     disks = sorted(d.id for d in archive.disks)
     raw = archive.index.get_meta(FULL_CHECK_RUN)
     if raw:
         run = json.loads(raw)
         if run.get("disks") == disks:
-            return run["started"]
-    started = now()
+            return run["started"], True
+    started = _precise_now()
     with archive.index.transaction():
         archive.index.set_meta(FULL_CHECK_RUN, json.dumps({"started": started, "disks": disks}))
         archive.index.log("full_check_started", disks=disks)
-    return started
+    return started, False
+
+
+def _precise_now() -> str:
+    """Microseconds, always written: these strings are compared with each other."""
+    return datetime.now(UTC).isoformat(timespec="microseconds")
 
 
 def _write_states(archive: Archive, pending: list[tuple[str, str, str]]) -> None:
     if not pending:
         return
-    verified = now()
+    verified = _precise_now()
     with archive.index.transaction():
         for path, disk_id, state in pending:
             archive.index.set_copy(path, disk_id, state, verified_at=verified)

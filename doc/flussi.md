@@ -258,6 +258,11 @@ riproposta.
 
 I file sostituiti o cancellati finiscono nel cestino del loro disco.
 
+_Nota per l'interfaccia_: il motore produce un problema per file. Una cartella
+rinominata su un disco diventa quindi un problema per ogni foto: la schermata
+del check li deve **raggruppare per cartella** ("La cartella NEVE 2024 è stata
+rinominata sul Disco 2 · 10 foto").
+
 ## 5. Archivio (visualizzatore)
 
 ```

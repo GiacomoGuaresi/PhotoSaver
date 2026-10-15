@@ -11,6 +11,7 @@
 
 from __future__ import annotations
 
+import os
 import random
 import shutil
 from datetime import datetime, timedelta
@@ -155,3 +156,121 @@ class _Generator:
 
         self.ignored(archive / "MUSICA", ["brano 1.mp3", "brano 2.m4a"])
         self.ignored(y2025, ["Thumbs.db", "desktop.ini"])
+
+
+# A ready archive and ways to break it
+
+
+def setup(root: Path, *, seed: int = 0) -> None:
+    """Fresh simulated disks with an archive on A and B, holding the old archive."""
+    from photosaver.core import archive, upload  # the app's own code, as a user would use it
+
+    create(root, seed=seed)
+    a = archive.create_archive(root / "disk-a", label="A", archive_dir="Foto")
+    b = archive.join_archive(a, root / "disk-b", label="B")
+    with archive.Archive.open([a, b]) as arch:
+        plan = upload.analyze([root / DESKTOP / "vecchio-archivio" / "FOTO FAMIGLIA"])
+        plan.folders[0].destination = ""
+        upload.resolve(plan, arch)
+        upload.apply(plan, arch)
+
+
+def _photos(root: Path, disk: str) -> list[Path]:
+    return sorted((root / disk / "Foto").rglob("*.jpg"))
+
+
+def _pick(root: Path, disk: str, rng: random.Random) -> Path:
+    return rng.choice(_photos(root, disk))
+
+
+def _keep_date(path: Path, change) -> None:
+    stat = path.stat()
+    change(path)
+    os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+
+
+def break_corrupt(root: Path, rng: random.Random) -> str:
+    """Silent corruption: a byte changes on disk B, size and date do not."""
+    path = _pick(root, "disk-b", rng)
+
+    def flip(p: Path) -> None:
+        data = bytearray(p.read_bytes())
+        data[len(data) // 2] ^= 0xFF
+        p.write_bytes(bytes(data))
+
+    _keep_date(path, flip)
+    return f"corrupted {path.relative_to(root)}"
+
+
+def break_truncate(root: Path, rng: random.Random) -> str:
+    """A copy cut to 0 bytes on disk A, date unchanged."""
+    path = _pick(root, "disk-a", rng)
+    _keep_date(path, lambda p: p.write_bytes(b""))
+    return f"emptied {path.relative_to(root)}"
+
+
+def break_delete(root: Path, rng: random.Random) -> str:
+    """A photo deleted by hand from disk A."""
+    path = _pick(root, "disk-a", rng)
+    path.unlink()
+    return f"deleted {path.relative_to(root)}"
+
+
+def break_move(root: Path, rng: random.Random) -> str:
+    """An event folder renamed by hand on disk B."""
+    folders = sorted({p.parent for p in _photos(root, "disk-b")} - {root / "disk-b" / "Foto"})
+    folder = rng.choice(folders)
+    target = folder.with_name(folder.name + " (rinominata)")
+    folder.rename(target)
+    return f"renamed {folder.relative_to(root)} → {target.name}"
+
+
+def break_edit(root: Path, rng: random.Random) -> str:
+    """A photo edited with another program on disk A: new content, new date."""
+    path = _pick(root, "disk-a", rng)
+    make_photo(path, seed=rng.randrange(2**32), mtime=datetime.now())
+    return f"edited {path.relative_to(root)}"
+
+
+def break_add(root: Path, rng: random.Random) -> str:
+    """A photo copied by hand onto disk A only."""
+    path = root / "disk-a" / "Foto" / "FOTO 2025" / "aggiunta a mano.jpg"
+    make_photo(path, taken=datetime(2025, 12, 25, 12), seed=rng.randrange(2**32))
+    return f"added {path.relative_to(root)}"
+
+
+def break_partial(root: Path, rng: random.Random) -> str:
+    """An interrupted copy: a half-written partial file left on disk B."""
+    path = _pick(root, "disk-b", rng)
+    partial = path.with_name(f".{path.name}.photosaver-partial")
+    partial.write_bytes(path.read_bytes()[: path.stat().st_size // 2])
+    return f"left {partial.relative_to(root)}"
+
+
+def break_desktop(root: Path, rng: random.Random) -> str:
+    """Odd files among the photos to upload: a 0-byte photo and Windows shortcuts."""
+    folder = root / DESKTOP / "LAGO 2026"
+    make_file(folder / "20260920_180000.jpg", b"")
+    for n in range(3):
+        make_file(folder / f"IMG_{n:04d}.jpg.lnk", b"L\x00\x00\x00" + rng.randbytes(60))
+    return "added a 0-byte photo and 3 .lnk shortcuts to desktop/LAGO 2026"
+
+
+SCENARIOS = {
+    "corrupt": break_corrupt,
+    "truncate": break_truncate,
+    "delete": break_delete,
+    "move": break_move,
+    "edit": break_edit,
+    "add": break_add,
+    "partial": break_partial,
+    "desktop": break_desktop,
+}
+
+
+def break_disks(root: Path, names: list[str], *, seed: int = 0) -> list[str]:
+    """Apply failure scenarios to set-up simulated disks; returns what was done."""
+    if not (root / MARKER).is_file():
+        raise NotDevDisks(f"{root} has no {MARKER} marker: not touching it")
+    rng = random.Random(seed)
+    return [SCENARIOS[name](root, rng) for name in names]

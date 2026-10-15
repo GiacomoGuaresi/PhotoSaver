@@ -54,7 +54,10 @@ Si creano con:
 
 ```sh
 uv run python scripts/dev_disks.py create   # ricrea dev-disks/ da zero (--seed, --scale)
-uv run python scripts/dev_disks.py reset    # lo cancella
+uv run python scripts/dev_disks.py setup    # + archivio su disk-a e disk-b con il vecchio archivio
+uv run python scripts/dev_disks.py break all          # tutti gli scenari di guasto
+uv run python scripts/dev_disks.py break corrupt move # solo alcuni
+uv run python scripts/dev_disks.py reset    # cancella tutto
 ```
 
 `desktop/` contiene due eventi nuovi (`MARE 2026`, `LAGO 2026`) e un archivio
@@ -68,6 +71,24 @@ sono segnaposto non riproducibili. Il generatore è in
 generatore: non può cancellare un disco vero per errore.
 
 ### Scenari da poter riprodurre
+
+Disponibili con `break` (vedi `SCENARIOS` in `src/photosaver/devtools/dev_disks.py`)
+e provati end-to-end in `tests/test_scenarios.py`: l'archivio viene rotto in
+tutti i modi, controllato e sistemato, e alla fine nessuna foto deve mancare
+(nell'archivio o nel cestino).
+
+| Scenario | Cosa fa |
+|---|---|
+| `corrupt` | cambia un byte di una foto sul disco B, stessa dimensione e data |
+| `truncate` | porta a 0 byte una foto sul disco A, stessa data |
+| `delete` | cancella una foto dal disco A |
+| `move` | rinomina una cartella evento sul disco B |
+| `edit` | modifica una foto sul disco A (contenuto e data nuovi) |
+| `add` | aggiunge a mano una foto solo sul disco A |
+| `partial` | lascia un file `.photosaver-partial` a metà sul disco B |
+| `desktop` | mette tra le foto da caricare una foto da 0 byte e 3 collegamenti `.lnk` |
+
+Idee iniziali:
 
 Piccoli script di sviluppo (es. `scripts/dev_disks.py`) per creare e "rompere"
 i dischi simulati:
