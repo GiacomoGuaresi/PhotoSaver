@@ -85,7 +85,9 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
         "Servono due dischi nuovi: le tue foto staranno su entrambi, così se uno si rompe "
         "sono ancora al sicuro sull'altro."
     ),
-    "Everything on the two disks will be erased.": "Tutto quello che c'è sui due dischi verrà cancellato.",
+    "Everything on the two disks will be erased.": (
+        "Tutto quello che c'è sui due dischi verrà cancellato."
+    ),
     "Start": "Inizia",
     "Connect the new disk for Disk %1": "Collega il disco nuovo per il Disco %1",
     "Plug it in, then choose it here.": "Collegalo, poi sceglilo qui.",

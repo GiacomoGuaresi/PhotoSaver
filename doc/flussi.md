@@ -154,6 +154,15 @@ Procedura guidata:
 3. **Scegli il disco B** → stessi passaggi.
 4. Fine: archivio vuoto, pronto per il primo caricamento.
 
+**Come è fatta** (3.3): introduzione ("servono due dischi nuovi, verranno
+cancellati") → per il Disco 1 e poi il Disco 2: *collega il disco nuovo*
+(l'elenco si aggiorna da solo, schede grandi) → *conferma* con una casella "Sì,
+questo disco si può cancellare" e un pulsante rosso → *il disco è pronto*, con
+l'invito a scrivere "Disco 1" su un'etichetta e attaccarla → fine: "I dischi
+sono pronti! Ora puoi aggiungere le tue foto". Dopo il primo disco non si torna
+indietro. Per ora si possono scegliere solo dischi vuoti (la formattazione vera
+arriva con M5); la cartella delle foto si chiama "Foto" (o "Photos" in inglese).
+
 ### Sostituire un disco ✅ (nell'MVP)
 
 Se un disco si rompe: "Sostituisci disco" → inizializza un disco nuovo come
