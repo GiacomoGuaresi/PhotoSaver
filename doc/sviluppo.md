@@ -11,6 +11,17 @@ uv run ruff check .        # lint
 uv run ruff format .       # formattazione
 ```
 
+### CLI di debug
+
+Per provare il motore senza interfaccia, sui dischi simulati:
+
+```sh
+uv run python -m photosaver.cli init dev-disks/disk-a --label A
+uv run python -m photosaver.cli init dev-disks/disk-b --label B --join dev-disks/disk-a
+uv run python -m photosaver.cli status dev-disks/disk-a
+uv run python -m photosaver.cli scan dev-disks/desktop
+```
+
 ## Dischi simulati
 
 Nelle prime fasi i "dischi" sono **cartelle locali non committate**. Più avanti

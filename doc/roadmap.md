@@ -36,7 +36,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 | 1.3 | **Scanner**: solo foto e video, conteggio dei file ignorati, file temporanei e `._*` di macOS esclusi | `feat(core): media scanner` | ✅ |
 | 1.4 | **Hash** in streaming: SHA-256 (veloce, verificabile anche senza l'app) | `feat(core): file hashing` | ✅ |
 | 1.5 | **Copia sicura**: file `.partial` → flush → rilettura e verifica dell'hash → rinomina; data di modifica conservata | `feat(core): verified safe copy` | ✅ |
-| 1.6 | **CLI di debug** (`python -m photosaver.cli`): init, scan, status | `feat(cli): debug commands` | ⬜ |
+| 1.6 | **CLI di debug** (`python -m photosaver.cli`): init, scan, status | `feat(cli): debug commands` | ✅ |
 
 ## M2 — Operazioni: carica, check, ripara (senza UI) → `v0.2.0`
 
