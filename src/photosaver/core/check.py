@@ -33,6 +33,7 @@ MISSING = "missing"  # in the index, not on the disk
 UNTRACKED = "untracked"  # on the disk, not in the index: added outside the app
 CORRUPT = "corrupt"  # different content, same date: damaged without anyone touching it
 MODIFIED = "modified"  # different content and date: edited outside the app
+MOVED = "moved"  # missing at ``path``, found at ``target`` with the same content
 
 # exFAT keeps dates to 10 ms, FAT to 2 s: closer dates are the same date
 MTIME_TOLERANCE_NS = 2_000_000_000
@@ -50,6 +51,7 @@ class Difference:
     size: int | None = None  # on the disk, when the file is there
     mtime_ns: int | None = None
     hash: str | None = None  # of the file on the disk, when read
+    target: str | None = None  # new path of a moved file
 
 
 @dataclass
@@ -161,6 +163,7 @@ def quick_check(
         _scan_disk(archive, disk, records, emit, should_stop, full=False)
         if on_progress:
             on_progress(n + 1, len(archive.disks))
+    detect_moves(report, records)
     return report
 
 
@@ -261,7 +264,38 @@ def full_check(
         archive.sync_indexes()
         raise hashing.Cancelled("full check interrupted")
     _finish_run(archive, report)
+    detect_moves(report, records)
     return report
+
+
+def detect_moves(report: Report, records: dict[str, FileRecord]) -> None:
+    """Pair, on each disk, a missing file with a new file of the same content: it was moved
+    or renamed. Among several candidates, the one with the same file name wins."""
+    by_disk: dict[str, list[Difference]] = {}
+    for diff in report.differences:
+        if diff.kind == UNTRACKED and diff.hash:
+            by_disk.setdefault(diff.disk_id, []).append(diff)
+
+    moved: list[Difference] = []
+    paired: set[int] = set()
+    for diff in report.differences:
+        if diff.kind != MISSING or diff.path not in records:
+            continue
+        expected = records[diff.path].hash
+        name = diff.path.rsplit("/", 1)[-1]
+        candidates = [
+            u for u in by_disk.get(diff.disk_id, []) if u.hash == expected and id(u) not in paired
+        ]
+        if not candidates:
+            continue
+        best = min(candidates, key=lambda u: (u.path.rsplit("/", 1)[-1] != name, u.path))
+        paired.update((id(best), id(diff)))
+        moved.append(
+            Difference(
+                MOVED, diff.disk_id, diff.path, best.size, best.mtime_ns, best.hash, best.path
+            )
+        )
+    report.differences = [d for d in report.differences if id(d) not in paired] + moved
 
 
 _STATE_OF_KIND = {MISSING: STATE_MISSING, CORRUPT: STATE_CORRUPT, MODIFIED: STATE_MODIFIED}

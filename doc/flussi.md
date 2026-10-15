@@ -117,6 +117,10 @@ con l'hash e adottato, senza ricopiarlo.
   - **corrotto**: contenuto diverso con la stessa data (nessuno l'ha toccato);
   - **modificato**: contenuto e data diversi (modificato fuori dall'app);
   - data cambiata ma contenuto uguale: nessun problema.
+  - **spostato o rinominato**: un file mancante e uno nuovo con lo stesso
+    contenuto sullo stesso disco; tra più candidati vince quello con lo
+    stesso nome. Una copia (l'originale è ancora al suo posto) non è uno
+    spostamento.
 
   Una cartella illeggibile è un errore, non "file mancanti".
 - **Completo**: lanciato a mano (o su promemoria), rilegge e verifica tutti

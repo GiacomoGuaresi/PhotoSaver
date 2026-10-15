@@ -144,7 +144,8 @@ def _check(args) -> int:
         labels = {disk.id: disk.label for disk in arch.disks}
         print(f"{report.files} files in the index, {len(report.differences)} differences")
         for diff in sorted(report.differences, key=lambda d: (d.kind, d.path, labels[d.disk_id])):
-            print(f"  {diff.kind:9} {labels[diff.disk_id]}  {diff.path}")
+            moved = f" → {diff.target}" if diff.target else ""
+            print(f"  {diff.kind:9} {labels[diff.disk_id]}  {diff.path}{moved}")
         for disk_id, path, reason in report.errors:
             print(f"  error     {labels[disk_id]}  {path}: {reason}")
         return 0 if report.clean else 1
