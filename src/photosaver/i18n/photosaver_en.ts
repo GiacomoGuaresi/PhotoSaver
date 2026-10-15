@@ -341,97 +341,97 @@ Check that both disks are connected, then try again.</source>
 <context>
     <name>Controller</name>
     <message>
-        <location filename="../ui/controller.py" line="53" />
+        <location filename="../ui/controller.py" line="52" />
         <source>History</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="55" />
+        <location filename="../ui/controller.py" line="54" />
         <source>Trash</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="113" />
+        <location filename="../ui/controller.py" line="112" />
         <source>Disk %1</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="116" />
+        <location filename="../ui/controller.py" line="115" />
         <source>not connected</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="119" />
+        <location filename="../ui/controller.py" line="118" />
         <source>connected</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="122" />
+        <location filename="../ui/controller.py" line="121" />
         <source>connected · %1 free</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="131" />
+        <location filename="../ui/controller.py" line="130" />
         <source>Perfect, both disks are here</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="132" />
+        <location filename="../ui/controller.py" line="131" />
         <source>I'm checking that all the photos are fine… it takes a few seconds.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="149" />
+        <location filename="../ui/controller.py" line="148" />
         <source>Last time something was interrupted. Your photos are safe: I'll fix it.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="151" />
+        <location filename="../ui/controller.py" line="150" />
         <source>Fix</source>
         <translation type="unfinished" />
     </message>
     <message numerus="yes">
-        <location filename="../ui/controller.py" line="156" />
+        <location filename="../ui/controller.py" line="155" />
         <source>I found %n thing(s) to sort out on the disks.</source>
         <translation><numerusform>I found %n thing to sort out on the disks.</numerusform><numerusform>I found %n things to sort out on the disks.</numerusform></translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="158" />
+        <location filename="../ui/controller.py" line="157" />
         <source>Let's look together</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="163" />
+        <location filename="../ui/controller.py" line="162" />
         <source>Some files can't be read. Run a check of the disks.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="165" />
+        <location filename="../ui/controller.py" line="164" />
         <source>Check</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="169" />
+        <location filename="../ui/controller.py" line="168" />
         <source>Your photos are safe on both disks.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="175" />
+        <location filename="../ui/controller.py" line="174" />
         <source>I'm finishing what was interrupted…</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="256" />
+        <location filename="../ui/controller.py" line="266" />
         <source>Some photos could not be restored: a photo with the same name is already there.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="282" />
+        <location filename="../ui/controller.py" line="292" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="324" />
+        <location filename="../ui/controller.py" line="334" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation type="unfinished" />
     </message>
@@ -1033,6 +1033,14 @@ Check that both disks are connected, then try again.</source>
     </message>
 </context>
 <context>
+    <name>TileDelegate</name>
+    <message numerus="yes">
+        <location filename="../ui/viewer.py" line="147" />
+        <source>%n photo(s)</source>
+        <translation><numerusform>%n photo</numerusform><numerusform>%n photos</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>TrashScreen</name>
     <message>
         <location filename="../ui/history_trash.py" line="149" />
@@ -1103,6 +1111,20 @@ Check that both disks are connected, then try again.</source>
     <message>
         <location filename="../ui/history_trash.py" line="223" />
         <source>Delete for good</source>
+        <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>ViewerScreen</name>
+    <message>
+        <location filename="../ui/viewer.py" line="168" />
+        <location filename="../ui/viewer.py" line="235" />
+        <source>Your photos</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="179" />
+        <source>All your photos</source>
         <translation type="unfinished" />
     </message>
 </context>

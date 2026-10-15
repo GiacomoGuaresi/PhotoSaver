@@ -10,6 +10,10 @@ from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
 
+from . import imaging
+
+imaging.setup()
+
 EXIF = "exif"
 NAME = "name"
 MTIME = "mtime"

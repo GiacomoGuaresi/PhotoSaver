@@ -412,4 +412,6 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     ),
     "Yes, delete them for good": "Sì, eliminali definitivamente",
     "Delete for good": "Elimina definitivamente",
+    # Viewer
+    "All your photos": "Tutte le tue foto",
 }

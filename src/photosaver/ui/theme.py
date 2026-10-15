@@ -246,6 +246,7 @@ QListWidget, QTreeWidget, QTableWidget {
     outline: none;
 }
 QListWidget::item, QTreeWidget::item { padding: 8px; }
+QListView#grid { background: @BG; border: 1px solid @BORDER; border-radius: @RADIUSpx; }
 QHeaderView::section {
     background: @SURFACE_2; color: @TEXT_MUTED; border: none; padding: 8px; font-weight: 600;
 }

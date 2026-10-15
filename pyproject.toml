@@ -9,7 +9,9 @@ authors = [{ name = "Giacomo Guaresi" }]
 requires-python = ">=3.11"
 dependencies = [
     "pillow>=11",
+    "pillow-heif>=0.18",
     "pyside6>=6.7",
+    "rawpy>=0.21",
 ]
 
 [project.gui-scripts]

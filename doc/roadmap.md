@@ -71,7 +71,7 @@ menu "Altro".
 
 | # | Step | Commit | Stato |
 |---|---|---|---|
-| 4.1 | Albero delle cartelle + griglia di miniature | `feat(viewer): folder tree and grid` | ⬜ |
+| 4.1 | Albero delle cartelle + griglia di miniature | `feat(viewer): folder tree and grid` | ✅ |
 | 4.2 | **Miniature salvate sui dischi** (`.photosaver/`), generate in background | `feat(viewer): on-disk thumbnails` | ⬜ |
 | 4.3 | Anteprima grande di foto e **video** | `feat(viewer): fullscreen preview` | ⬜ |
 | 4.4 | Indicatori di stato per file e cartelle | `feat(viewer): sync status badges` | ⬜ |

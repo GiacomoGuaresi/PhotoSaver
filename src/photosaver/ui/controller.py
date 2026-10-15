@@ -8,9 +8,9 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QLocale, QObject, Signal
+from PySide6.QtCore import QLocale, QObject
 
-from ..core import detect, status, trash
+from ..core import browse, detect, status, trash
 from ..core.archive import Archive
 from . import theme
 from .add_photos import AddPhotosFlow
@@ -22,6 +22,7 @@ from .main_window import MainWindow
 from .prepare import PrepareFlow
 from .screen import Banner
 from .session import Session, disk_name
+from .viewer import ViewerScreen
 from .workers import Worker
 
 # Modes
@@ -36,8 +37,6 @@ CHECK = "check"
 
 
 class Controller(QObject):
-    browse_requested = Signal()
-
     def __init__(self, window: MainWindow, session: Session, parent: QObject | None = None):
         super().__init__(parent)
         self.window = window
@@ -215,6 +214,17 @@ class Controller(QObject):
         flow.finished.connect(self._flow_finished)
         flow.start(quick_now=quick_now)
 
+    # Viewer
+
+    def show_viewer(self) -> ViewerScreen:
+        disks = list(self.disks)
+        with Archive.open(disks) as archive:
+            records = list(archive.index.files())
+        folders = {f for disk in disks for f in browse.disk_folders(disk.archive)}
+        root = browse.build_tree(records, sorted(folders))
+        self._home()
+        return self.window.open(ViewerScreen(root, [disk.archive for disk in disks]))
+
     # History and trash
 
     def show_history(self) -> None:
@@ -290,7 +300,7 @@ class Controller(QObject):
         if not isinstance(screen, HomeScreen) or self.window.stack.count() != 1:
             screen = self.window.reset(HomeScreen())
             screen.add_requested.connect(self.add_photos)
-            screen.browse_requested.connect(self.browse_requested)
+            screen.browse_requested.connect(self.show_viewer)
             screen.check_requested.connect(self.check_disks)
         return screen
 
