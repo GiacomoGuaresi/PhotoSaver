@@ -78,4 +78,36 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
         "Riponili in un posto sicuro. Alla prossima!"
     ),
     "Close PhotoSaver": "Chiudi PhotoSaver",
+    # Preparing the disks
+    "Let's prepare the disks": "Prepariamo i dischi",
+    "You need two new disks: your photos will be kept on both, so if one breaks they are "
+    "still safe on the other.": (
+        "Servono due dischi nuovi: le tue foto staranno su entrambi, così se uno si rompe "
+        "sono ancora al sicuro sull'altro."
+    ),
+    "Everything on the two disks will be erased.": "Tutto quello che c'è sui due dischi verrà cancellato.",
+    "Start": "Inizia",
+    "Connect the new disk for Disk %1": "Collega il disco nuovo per il Disco %1",
+    "Plug it in, then choose it here.": "Collegalo, poi sceglilo qui.",
+    "Waiting for a new disk…": "Aspetto un disco nuovo…",
+    "Next": "Avanti",
+    "A disk that already contains files can't be used yet: it must be empty.": (
+        "Un disco che contiene già dei file per ora non si può usare: deve essere vuoto."
+    ),
+    "Prepare “%1” as Disk %2?": "Preparo “%1” come Disco %2?",
+    "Everything on this disk will be erased. This can't be undone.": (
+        "Tutto quello che c'è su questo disco verrà cancellato. Non si può tornare indietro."
+    ),
+    "Yes, this disk can be erased": "Sì, questo disco si può cancellare",
+    "Prepare Disk %1": "Prepara il Disco %1",
+    "Photos": "Foto",
+    "Disk %1 is ready": "Il Disco %1 è pronto",
+    "Write “Disk %1” on a sticker and put it on the disk, so you'll always know which one it is.": (
+        "Scrivi “Disco %1” su un'etichetta e attaccala al disco, così saprai sempre qual è."
+    ),
+    "The disks are ready! Now you can add your photos.": (
+        "I dischi sono pronti! Ora puoi aggiungere le tue foto."
+    ),
+    "Done": "Fatto",
+    "Next: Disk %1": "Avanti: Disco %1",
 }

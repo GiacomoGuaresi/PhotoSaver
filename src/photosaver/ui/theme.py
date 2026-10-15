@@ -181,6 +181,9 @@ QPushButton[role="primary"]:disabled {
 QPushButton[role="danger"] {
     background: @DANGER; color: #1B0507; border: 2px solid @DANGER; font-weight: 600;
 }
+QPushButton[role="danger"]:disabled {
+    background: @SURFACE_2; color: @TEXT_FAINT; border-color: @SURFACE_2;
+}
 QPushButton[role="link"] {
     background: transparent; border: none; color: @ACCENT_HOVER; padding: 6px 4px;
     text-align: left;
@@ -209,6 +212,12 @@ QLineEdit, QComboBox, QSpinBox {
 QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border-color: @ACCENT; }
 
 QCheckBox, QRadioButton { spacing: 10px; }
+QRadioButton[role="choice"] {
+    background: @SURFACE; border: 1px solid @BORDER; border-radius: @RADIUS_LARGEpx;
+    padding: 18px 20px; font-size: 15pt;
+}
+QRadioButton[role="choice"]:hover { border-color: @BORDER_STRONG; }
+QRadioButton[role="choice"]:checked { border: 2px solid @ACCENT; background: @SURFACE_2; }
 QCheckBox::indicator, QRadioButton::indicator { width: 20px; height: 20px; }
 
 QProgressBar {

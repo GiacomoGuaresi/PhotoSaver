@@ -14,6 +14,7 @@ from ..core import detect, status
 from .connect import BusyScreen, ConnectScreen, DoneScreen
 from .home import HomeScreen
 from .main_window import MainWindow
+from .prepare import PrepareFlow
 from .session import Session, disk_name
 from .workers import Worker
 
@@ -23,10 +24,10 @@ CHECKING = "checking"
 HOME = "home"
 READ_ONLY = "read_only"
 DONE = "done"
+PREPARE = "prepare"
 
 
 class Controller(QObject):
-    prepare_requested = Signal()  # "Prepare the disks" (first time)
     add_requested = Signal()
     browse_requested = Signal()
     check_requested = Signal()  # the "Check the disks" flow
@@ -71,7 +72,7 @@ class Controller(QObject):
             self.mode = CONNECT
             screen = self.window.reset(ConnectScreen())
             screen.one_disk_requested.connect(self.open_read_only)
-            screen.prepare_requested.connect(self.prepare_requested)
+            screen.prepare_requested.connect(self.prepare)
         screen.update_state(found, assessment)
 
     def _update_disk_bar(self) -> None:
@@ -144,6 +145,20 @@ class Controller(QObject):
         self.window.reset(BusyScreen(self.tr("I'm finishing what was interrupted…")))
         self.mode = CHECKING
         self.run(lambda **kw: status.recover(disks, **kw), lambda _: self.run_startup_check())
+
+    # Preparing new disks
+
+    def prepare(self) -> None:
+        self.busy = True
+        self.mode = PREPARE
+        flow = PrepareFlow(self.window, self.session, self)
+        flow.finished.connect(self._prepared)
+        flow.start()
+
+    def _prepared(self, done: bool) -> None:
+        self.busy = False
+        self.mode = ""
+        self.on_changed()
 
     # Read-only
 
