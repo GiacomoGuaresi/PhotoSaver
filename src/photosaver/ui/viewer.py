@@ -7,20 +7,28 @@ as big tiles: double click to open a folder or to see a photo full screen.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QObject, QRect, QSize, Qt, Signal
 from PySide6.QtGui import QColor, QFont, QPainter, QPen
 from PySide6.QtWidgets import (
     QAbstractItemView,
+    QDialog,
+    QDialogButtonBox,
+    QHBoxLayout,
     QHeaderView,
+    QInputDialog,
+    QLabel,
     QListView,
+    QMessageBox,
+    QPushButton,
     QSplitter,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QTreeWidget,
     QTreeWidgetItem,
+    QVBoxLayout,
     QWidget,
 )
 
@@ -209,10 +217,56 @@ class TileDelegate(QStyledItemDelegate):
         painter.drawText(name_rect, int(flags), entry.name)
 
 
+class MoveDialog(QDialog):
+    """Choose the folder to move things into."""
+
+    def __init__(self, root: Folder, parent: QWidget | None = None):
+        super().__init__(parent)
+        self.setWindowTitle(self.tr("Move to…"))
+        self.resize(480, 520)
+        layout = QVBoxLayout(self)
+        layout.addWidget(QLabel(self.tr("Choose where to move them:")))
+        self.tree = QTreeWidget()
+        self.tree.setHeaderHidden(True)
+        top = QTreeWidgetItem([self.tr("All your photos")])
+        top.setData(0, Qt.ItemDataRole.UserRole, "")
+        self.tree.addTopLevelItem(top)
+        self._fill(top, root)
+        self.tree.expandToDepth(0)
+        self.tree.setCurrentItem(top)
+        layout.addWidget(self.tree, 1)
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def _fill(self, parent: QTreeWidgetItem, folder: Folder) -> None:
+        for child in folder.children():
+            item = QTreeWidgetItem([child.name])
+            item.setIcon(0, theme.icon("folder", theme.TEXT_MUTED))
+            item.setData(0, Qt.ItemDataRole.UserRole, child.path)
+            parent.addChild(item)
+            self._fill(item, child)
+
+    @property
+    def folder(self) -> str:
+        return self.tree.currentItem().data(0, Qt.ItemDataRole.UserRole)
+
+
 class ViewerScreen(Screen):
-    """Folders and thumbnails. ``open_requested(records, row)``: show a photo full screen."""
+    """Folders and thumbnails. ``open_requested(records, row)``: show a photo full screen.
+
+    With every disk connected, the selection can be renamed, moved or deleted, and new
+    folders created: the ``*_requested`` signals ask the controller to do it.
+    """
 
     open_requested = Signal(list, int)
+    new_folder_requested = Signal(str, str)  # parent, name
+    rename_requested = Signal(str, str)  # path, new name
+    move_requested = Signal(list, str)  # paths, folder
+    delete_requested = Signal(list)  # paths
 
     def __init__(
         self,
@@ -220,9 +274,27 @@ class ViewerScreen(Screen):
         disks: list[Disk],
         problems: dict[str, dict[str, str]] | None = None,
         labels: dict[str, str] | None = None,
+        can_edit: bool = True,
         parent: QWidget | None = None,
     ):
         super().__init__(self.tr("Your photos"), parent=parent)
+        self.can_edit = can_edit
+        tools = QHBoxLayout()
+        tools.setSpacing(10)
+        self.new_folder = self._tool("folder-plus", self.tr("New folder"), self._new_folder)
+        self.rename = self._tool("pencil", self.tr("Rename"), self._rename)
+        self.move = self._tool("folder-input", self.tr("Move to…"), self._move)
+        self.delete = self._tool("trash-2", self.tr("Delete"), self._delete)
+        for button in (self.new_folder, self.rename, self.move, self.delete):
+            tools.addWidget(button)
+            button.setVisible(can_edit)
+        self.read_only = theme.set_role(
+            QLabel(self.tr("To change your photos, connect both disks.")), "muted"
+        )
+        self.read_only.setVisible(not can_edit)
+        tools.addWidget(self.read_only)
+        tools.addStretch(1)
+        self.body.addLayout(tools)
         self.root = root
         self.disks = disks
         self.archives = [disk.archive for disk in disks]
@@ -266,11 +338,13 @@ class ViewerScreen(Screen):
         self.grid.setObjectName("grid")
         self.grid.setItemDelegate(TileDelegate(self.grid))
         self.grid.doubleClicked.connect(self._open)
+        self.grid.selectionModel().selectionChanged.connect(self._update_tools)
         splitter.addWidget(self.grid)
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([280, 800])
         self.body.addWidget(splitter, 1)
         self.tree.setCurrentItem(top)
+        self._update_tools()
 
     def _fill(self, parent: QTreeWidgetItem, folder: Folder) -> None:
         for child in folder.children():
@@ -297,6 +371,77 @@ class ViewerScreen(Screen):
         folder = self.folder
         self.set_texts(folder.name or self.tr("Your photos"))
         self.model.show_folder(folder)
+        self._update_tools()
+
+    # Changes
+
+    def _tool(self, icon_name: str, text: str, slot) -> QPushButton:
+        button = QPushButton(theme.icon(icon_name), text)
+        button.clicked.connect(slot)
+        return button
+
+    @property
+    def selected(self) -> list[Entry]:
+        rows = sorted(index.row() for index in self.grid.selectionModel().selectedIndexes())
+        return [self.model.entries[row] for row in rows]
+
+    @staticmethod
+    def path_of(entry: Entry) -> str:
+        return entry.folder.path if entry.folder is not None else entry.record.path
+
+    def _update_tools(self, *_) -> None:
+        count = len(self.selected) if self.grid.selectionModel() else 0
+        self.rename.setEnabled(count == 1)
+        self.move.setEnabled(count > 0)
+        self.delete.setEnabled(count > 0)
+
+    def _new_folder(self) -> None:
+        name = self.ask_name(self.tr("New folder"), "")
+        if name:
+            self.new_folder_requested.emit(self.folder.path, name)
+
+    def _rename(self) -> None:
+        (entry,) = self.selected
+        name = self.ask_name(self.tr("Rename"), entry.name)
+        if not name or name == entry.name:
+            return
+        suffix = PurePosixPath(entry.name).suffix
+        if entry.record is not None and suffix and not name.lower().endswith(suffix.lower()):
+            name += suffix  # the type of file stays the same
+        self.rename_requested.emit(self.path_of(entry), name)
+
+    def _move(self) -> None:
+        folder = self.ask_folder()
+        if folder is not None:
+            self.move_requested.emit([self.path_of(e) for e in self.selected], folder)
+
+    def _delete(self) -> None:
+        entries = self.selected
+        if self.confirm_delete(entries):
+            self.delete_requested.emit([self.path_of(e) for e in entries])
+
+    # Questions (replaced in tests)
+
+    def ask_name(self, title: str, current: str) -> str | None:
+        name, ok = QInputDialog.getText(self, title, self.tr("Name:"), text=current)
+        return name.strip() if ok else None
+
+    def ask_folder(self) -> str | None:
+        dialog = MoveDialog(self.root, self)
+        return dialog.folder if dialog.exec() == QDialog.DialogCode.Accepted else None
+
+    def confirm_delete(self, entries: list[Entry]) -> bool:
+        photos = sum(e.folder.count if e.folder else 1 for e in entries)
+        answer = QMessageBox.question(
+            self,
+            self.tr("Delete"),
+            self.tr(
+                "Move %n photo(s) to the trash? You can get them back from the trash for 30 days.",
+                "",
+                photos,
+            ),
+        )
+        return answer == QMessageBox.StandardButton.Yes
 
     def _open(self, index: QModelIndex) -> None:
         entry: Entry = index.data(ROLE_ENTRY)

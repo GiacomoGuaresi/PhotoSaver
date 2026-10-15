@@ -1,3 +1,3 @@
 """PhotoSaver: keep a photo archive mirrored on two external drives."""
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"

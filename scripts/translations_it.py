@@ -434,4 +434,26 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
         "Qui %n foto ha bisogno di attenzione. Controlla i dischi.",
         "Qui %n foto hanno bisogno di attenzione. Controlla i dischi.",
     ),
+    # Changes from the viewer
+    "There is already something with this name here.": "Qui c'è già qualcosa con questo nome.",
+    "This name can't be used.": "Questo nome non si può usare.",
+    "A name can't contain these signs: / \\ : * ? \" < > |": (
+        'Un nome non può contenere questi segni: / \\ : * ? " < > |'
+    ),
+    "A folder can't be moved inside itself.": "Una cartella non si può spostare dentro se stessa.",
+    "Not possible": "Non si può",
+    "The change could not be made: %1": "Non è stato possibile fare la modifica: %1",
+    "Move to…": "Sposta in…",
+    "Choose where to move them:": "Scegli dove spostarle:",
+    "New folder": "Nuova cartella",
+    "Rename": "Rinomina",
+    "Delete": "Elimina",
+    "To change your photos, connect both disks.": (
+        "Per modificare le tue foto collega entrambi i dischi."
+    ),
+    "Name:": "Nome:",
+    "Move %n photo(s) to the trash? You can get them back from the trash for 30 days.": (
+        "Spostare %n foto nel cestino? Potrai recuperarla dal cestino per 30 giorni.",
+        "Spostare %n foto nel cestino? Potrai recuperarle dal cestino per 30 giorni.",
+    ),
 }

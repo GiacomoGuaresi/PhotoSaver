@@ -147,3 +147,91 @@ def test_badges(qtbot, dev):
     assert sum(1 for i in rows.values() if i.data(ROLE_PROBLEM)) == 1
     assert viewer._items[folder].toolTip(0)
     controller.shutdown()
+
+
+def select(viewer, *names):
+    from PySide6.QtCore import QItemSelectionModel
+
+    viewer.grid.clearSelection()
+    for row, entry in enumerate(entries(viewer)):
+        if entry.name in names:
+            viewer.grid.selectionModel().select(
+                viewer.model.index(row), QItemSelectionModel.SelectionFlag.Select
+            )
+
+
+def test_edit_tools_follow_the_selection(qtbot, ui):
+    window, controller = ui
+    viewer = controller.show_viewer("FOTO 2024")
+    assert viewer.new_folder.isEnabled() and not viewer.rename.isEnabled()
+    select(viewer, "GITA 2024")
+    assert viewer.rename.isEnabled() and viewer.delete.isEnabled()
+    select(viewer, "GITA 2024", "NEVE 2024")
+    assert not viewer.rename.isEnabled() and viewer.move.isEnabled()
+
+
+def test_rename_new_folder_move_delete(qtbot, ui, dev, monkeypatch):
+    from photosaver.core import check
+    from photosaver.core.archive import Archive
+    from photosaver.core.disk import open_disk
+
+    window, controller = ui
+    controller.stop_thumbnails()
+    viewer = controller.show_viewer("FOTO 2024")
+
+    monkeypatch.setattr(ViewerScreen, "ask_name", lambda self, title, current: "ALBUM")
+    viewer.new_folder.click()
+    viewer = window.current
+    assert viewer.folder.path == "FOTO 2024" and "ALBUM" in [e.name for e in entries(viewer)]
+
+    select(viewer, "NEVE 2024")
+    monkeypatch.setattr(ViewerScreen, "ask_name", lambda self, title, current: "Neve")
+    viewer.rename.click()
+    viewer = window.current
+    assert "Neve" in [e.name for e in entries(viewer)]
+
+    select(viewer, "Neve")
+    monkeypatch.setattr(ViewerScreen, "ask_folder", lambda self: "FOTO 2024/ALBUM")
+    viewer.move.click()
+    viewer = window.current
+    viewer.show_folder("FOTO 2024/ALBUM/Neve")
+    photo = entries(viewer)[0].name
+    select(viewer, photo)
+    monkeypatch.setattr(ViewerScreen, "ask_name", lambda self, title, current: "prima")
+    viewer.rename.click()  # the extension is kept
+    viewer = window.current
+    assert "prima.jpg" in [e.name for e in entries(viewer)]
+
+    select(viewer, "prima.jpg")
+    monkeypatch.setattr(ViewerScreen, "confirm_delete", lambda self, entries: True)
+    viewer.delete.click()
+    viewer = window.current
+    assert len(entries(viewer)) == 9
+
+    disks = [open_disk(dev / "disk-a"), open_disk(dev / "disk-b")]
+    with Archive.open(disks) as arch:
+        assert check.full_check(arch).clean
+        assert len(arch.index.trash()) == 2
+
+
+def test_edit_error_is_explained(qtbot, ui, monkeypatch):
+    window, controller = ui
+    viewer = controller.show_viewer("FOTO 2024")
+    shown = []
+    monkeypatch.setattr(controller, "show_edit_error", shown.append)
+    select(viewer, "GITA 2024")
+    monkeypatch.setattr(ViewerScreen, "ask_name", lambda self, title, current: "NEVE 2024")
+    viewer.rename.click()
+    assert shown == ["already exists"]
+    assert window.current.folder.path == "FOTO 2024"
+
+
+def test_read_only_viewer_has_no_edit_tools(qtbot, dev):
+    app_mod.create_application([])
+    window, controller = app_mod.build([dev / "disk-a"])
+    qtbot.addWidget(window)
+    controller.start()
+    window.current.one_disk.click()
+    viewer = controller.show_viewer()
+    assert viewer.rename.isHidden() and not viewer.read_only.isHidden()
+    controller.shutdown()

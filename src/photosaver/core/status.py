@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from . import check, resolve, trash
+from . import check, edit, resolve, trash
 from .archive import Archive
 from .disk import Disk
 
@@ -39,7 +39,8 @@ def startup_check(
             emptied = trash.empty(archive, older_than_days=trash.DEFAULT_DAYS)
             if emptied:
                 archive.sync_indexes()
-        result = Startup(interrupted=len(resolve.pending(archive)), emptied=emptied)
+        interrupted = len(resolve.pending(archive)) + edit.pending(archive)
+        result = Startup(interrupted=interrupted, emptied=emptied)
         result.files, result.size = archive.index.count_files()
         report = check.quick_check(archive, on_progress=on_progress, should_stop=should_stop)
         result.issues = resolve.build_issues(report, archive)
@@ -48,6 +49,7 @@ def startup_check(
 
 
 def recover(disks: list[Disk], **_) -> resolve.Outcome:
-    """Finish the actions interrupted last time."""
+    """Finish the actions and the changes interrupted last time."""
     with Archive.open(disks) as archive:
+        edit.recover(archive)
         return resolve.recover(archive)

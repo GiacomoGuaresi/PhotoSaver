@@ -109,6 +109,10 @@ Se l'app si chiude o un disco si stacca a metà di un'operazione:
   una riga, l'app la segnala e la completa: ogni azione si può rieseguire senza
   danni, perché riconosce quello che era già stato fatto (file già corretto,
   già spostato, già nel cestino).
+- **Modifiche dal visualizzatore** (rinomina, sposta, elimina): stesso
+  meccanismo del journal (operazione `edit`); i nomi si confrontano senza
+  distinguere maiuscole e minuscole, come su exFAT, e un cambio solo di
+  maiuscole si fa in due passi, così cambia davvero anche sui dischi exFAT.
 - **Caricamento**: rifare il caricamento riprende da dove si era fermato. Un
   file copiato su un disco ma non ancora registrato viene riconosciuto (dal
   caricamento successivo, o dal check come "aggiunto a mano", con l'azione

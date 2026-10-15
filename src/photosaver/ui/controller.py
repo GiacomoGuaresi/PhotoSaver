@@ -9,8 +9,9 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QLocale, QObject
+from PySide6.QtWidgets import QMessageBox
 
-from ..core import browse, detect, status, thumbs, trash
+from ..core import browse, detect, edit, status, thumbs, trash
 from ..core.archive import Archive
 from . import theme
 from .add_photos import AddPhotosFlow
@@ -257,7 +258,7 @@ class Controller(QObject):
 
     # Viewer
 
-    def show_viewer(self) -> ViewerScreen:
+    def show_viewer(self, folder: str = "", replace: bool = False) -> ViewerScreen:
         disks = list(self.disks)
         with Archive.open(disks) as archive:
             records = list(archive.index.files())
@@ -267,10 +268,57 @@ class Controller(QObject):
         labels = {d.id: d.label for d in known}
         folders = {f for disk in disks for f in browse.disk_folders(disk.archive)}
         root = browse.build_tree(records, sorted(folders))
-        self._home()
-        viewer = self.window.open(ViewerScreen(root, disks, problems, labels))
+        can_edit = self.session.assessment.situation == detect.COMPLETE
+        viewer = ViewerScreen(root, disks, problems, labels, can_edit)
+        if replace:
+            self.window.replace(viewer)
+        else:
+            self._home()
+            self.window.open(viewer)
+        viewer.show_folder(folder)
         viewer.open_requested.connect(lambda records, row: self.show_preview(disks, records, row))
+        viewer.new_folder_requested.connect(
+            lambda parent, name: self._edit(viewer, edit.new_folder, parent, name)
+        )
+        viewer.rename_requested.connect(
+            lambda path, name: self._edit(viewer, edit.rename, path, name)
+        )
+        viewer.move_requested.connect(lambda paths, to: self._move(viewer, paths, to))
+        viewer.delete_requested.connect(lambda paths: self._edit(viewer, edit.delete, paths))
         return viewer
+
+    def _move(self, viewer: ViewerScreen, paths: list[str], folder: str) -> None:
+        def move_all(archive, paths, folder):
+            for path in paths:
+                edit.move(archive, path, folder)
+
+        self._edit(viewer, move_all, paths, folder)
+
+    def _edit(self, viewer: ViewerScreen, change, *args) -> None:
+        """Run a change on every disk, then show the viewer again where it was."""
+        folder = viewer.folder.path
+        viewer.loader.wait()
+        try:
+            with Archive.open(list(self.disks)) as archive:
+                change(archive, *args)
+        except edit.EditError as error:
+            self.show_edit_error(str(error))
+        except OSError as error:
+            self.show_edit_error(error.strerror or str(error))
+        self.show_viewer(folder, replace=True)
+
+    def show_edit_error(self, reason: str) -> None:
+        texts = {
+            "already exists": self.tr("There is already something with this name here."),
+            "invalid name": self.tr("This name can't be used."),
+            "invalid characters": self.tr("A name can't contain these signs: / \\ : * ? \" < > |"),
+            "a folder can't go inside itself": self.tr("A folder can't be moved inside itself."),
+        }
+        QMessageBox.warning(
+            self.window,
+            self.tr("Not possible"),
+            texts.get(reason, self.tr("The change could not be made: %1").replace("%1", reason)),
+        )
 
     def show_preview(self, disks, records, row: int) -> PreviewScreen:
         def sources(path: str):
