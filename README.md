@@ -1,5 +1,7 @@
 # PhotoSaver
 
+[![CI](https://github.com/GiacomoGuaresi/PhotoSaver/actions/workflows/ci.yml/badge.svg)](https://github.com/GiacomoGuaresi/PhotoSaver/actions/workflows/ci.yml)
+
 A small desktop app that keeps a photo archive **mirrored on two external
 drives**, like RAID 1 but at application level: both drives stay plain exFAT
 disks, readable on any computer even without the app.

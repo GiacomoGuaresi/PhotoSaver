@@ -24,7 +24,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 |---|---|---|---|
 | 0.1 | `git init`, `README.md`, `LICENSE`, `.gitignore`, `doc/` | `first commit` | ✅ |
 | 0.2 | `pyproject.toml` (uv), `src/photosaver/`, `tests/`, pytest + ruff | `chore: python project skeleton` | ✅ |
-| 0.3 | CI: lint + test su **Linux e Windows** | `ci: lint and test` | ⬜ |
+| 0.3 | CI: lint + test su **Linux e Windows** | `ci: lint and test` | ✅ |
 | 0.4 | `scripts/dev_disks.py`: crea `dev-disks/` con foto finte generate (EXIF, GPS, date, nomi Samsung/WhatsApp, video, file da ignorare) | `chore(dev): simulated disks generator` | ⬜ |
 
 ## M1 — Motore: disco, indice, copia sicura (senza UI) → `v0.1.0`
