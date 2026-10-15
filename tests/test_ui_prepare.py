@@ -19,9 +19,7 @@ def setup(qtbot, tmp_path):
     qtbot.addWidget(window)
     controller.start()
     yield window, controller, roots
-    controller.session.stop()
-    for worker in list(controller._workers):
-        worker.wait(5000)
+    controller.shutdown()
 
 
 def test_new_disk_is_proposed(setup):

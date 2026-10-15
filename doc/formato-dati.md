@@ -8,7 +8,8 @@ cartella dell'archivio, leggibili anche senza l'app.
 ├── .photosaver/
 │   ├── disk.json        identità del disco
 │   ├── index.sqlite     indice dell'archivio
-│   └── cestino/         file cancellati o sostituiti dall'app
+│   ├── cestino/         file cancellati o sostituiti dall'app
+│   └── miniature/       anteprime piccole delle foto (ricreabili)
 └── <cartella archivio>/ le foto (es. Foto/)
 ```
 
@@ -114,3 +115,16 @@ Se l'app si chiude o un disco si stacca a metà di un'operazione:
   "aggiungi" proposta).
 - **Copie a metà**: restano come `.photosaver-partial`, ignorati e sostituiti
   dalla copia successiva.
+
+## Miniature
+
+`.photosaver/miniature/ab/<hash>.jpg`: JPEG di 320 pixel sul lato lungo,
+raddrizzate secondo l'orientamento EXIF. Il nome è l'hash del contenuto della
+foto, quindi una foto spostata o rinominata tiene la sua miniatura e i doppioni
+ne condividono una. Circa 30 KB l'una: ~2 GB per 60.000 foto.
+
+Sono una cache: se mancano si rifanno. Il visualizzatore le crea quando servono
+e le salva su tutti i dischi collegati; quando l'app è ferma sulla home, un
+lavoro in background a bassa priorità prepara quelle mancanti e si interrompe
+appena parte un'operazione vera (aggiungere foto, controllare…). I video per
+ora non hanno miniatura.

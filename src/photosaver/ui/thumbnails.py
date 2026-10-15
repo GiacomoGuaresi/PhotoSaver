@@ -40,10 +40,17 @@ class ThumbnailLoader(QObject):
 
     ready = Signal(str)
 
-    def __init__(self, sources: Callable[[str, str], list[Path]], parent: QObject | None = None):
-        """``sources(hash, path)`` lists where the photo can be read (one per disk)."""
+    def __init__(
+        self,
+        sources: Callable[[str, str], list[Path]],
+        data_dirs: list[Path] = (),
+        parent: QObject | None = None,
+    ):
+        """``sources(hash, path)`` lists where the photo can be read (one per disk);
+        thumbnails are read from and saved to ``data_dirs`` (the disks' .photosaver)."""
         super().__init__(parent)
         self._sources = sources
+        self._data_dirs = list(data_dirs)
         self._pool = QThreadPool(self)
         self._pool.setMaxThreadCount(THREADS)
         self._emitter = _Emitter(self)
@@ -68,13 +75,8 @@ class ThumbnailLoader(QObject):
         self._pool.start(_Job(key, lambda: self.make(key, sources), self._emitter))
 
     def make(self, key: str, sources: list[Path]) -> bytes | None:
-        """In a worker thread: the thumbnail of the first readable copy."""
-        for source in sources:
-            try:
-                return thumbs.make_thumbnail(source)
-            except thumbs.NoThumbnail:
-                continue
-        return None
+        """In a worker thread: from the disks, or made from the first readable copy."""
+        return thumbs.thumbnail(self._data_dirs, sources, key)
 
     def _done(self, key: str, image: QImage) -> None:
         self._pending.discard(key)

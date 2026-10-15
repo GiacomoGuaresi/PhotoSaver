@@ -58,9 +58,7 @@ def ui(qtbot, dev):
     window, controller = app_mod.build([dev / "disk-a", dev / "disk-b"])
     qtbot.addWidget(window)
     yield window, controller
-    controller.session.stop()
-    for worker in list(controller._workers):
-        worker.wait(10000)
+    controller.shutdown()
 
 
 def test_break_everything_and_fix_from_the_home(qtbot, ui, dev):

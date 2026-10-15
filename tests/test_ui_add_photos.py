@@ -27,9 +27,7 @@ def ui(qtbot, dev):
     controller.start()
     qtbot.waitUntil(lambda: controller.mode == HOME)
     yield window, controller
-    controller.session.stop()
-    for worker in list(controller._workers):
-        worker.wait(10000)
+    controller.shutdown()
 
 
 def archive_files(dev):

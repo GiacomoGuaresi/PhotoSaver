@@ -74,9 +74,7 @@ def ui(qtbot, dev):
     window, controller = app_mod.build([dev / "disk-a", dev / "disk-b"])
     qtbot.addWidget(window)
     yield window, controller
-    controller.session.stop()
-    for worker in list(controller._workers):
-        worker.wait(10000)
+    controller.shutdown()
 
 
 def test_menu_disabled_until_home(qtbot, ui):

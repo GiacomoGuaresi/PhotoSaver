@@ -21,9 +21,7 @@ def ui(qtbot, roots):
     window, controller = app_mod.build(roots)
     qtbot.addWidget(window)
     yield window, controller
-    controller.session.stop()
-    for worker in list(controller._workers):
-        worker.wait(5000)
+    controller.shutdown()
 
 
 def start_and_wait_home(qtbot, ui):

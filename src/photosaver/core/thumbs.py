@@ -6,7 +6,9 @@ keeps its thumbnail and copies of the same photo share one.
 
 from __future__ import annotations
 
+import contextlib
 import io
+import os
 from pathlib import Path
 
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -62,3 +64,83 @@ def _open(path: Path) -> Image.Image:
 
 def can_have_thumbnail(name: str) -> bool:
     return kind_of(name) in (PHOTO, RAW)
+
+
+# Thumbnails kept on the disks: ready on any computer
+
+CACHE_DIR = "miniature"
+
+
+def cache_path(data_dir: Path, hash_: str) -> Path:
+    """``.photosaver/miniature/ab/abcdef….jpg``: a folder per first two characters."""
+    return data_dir / CACHE_DIR / hash_[:2] / f"{hash_}.jpg"
+
+
+def read_cached(data_dirs: list[Path], hash_: str) -> bytes | None:
+    for data_dir in data_dirs:
+        try:
+            return cache_path(data_dir, hash_).read_bytes()
+        except OSError:
+            continue
+    return None
+
+
+def store(data_dirs: list[Path], hash_: str, data: bytes) -> None:
+    """Save a thumbnail on every disk; a disk that can't be written is just skipped."""
+    for data_dir in data_dirs:
+        path = cache_path(data_dir, hash_)
+        if path.exists():
+            continue
+        tmp = path.with_name(path.name + ".tmp")
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp.write_bytes(data)
+            os.replace(tmp, path)
+        except OSError:
+            with contextlib.suppress(OSError):
+                tmp.unlink()
+
+
+def thumbnail(data_dirs: list[Path], sources: list[Path], hash_: str) -> bytes | None:
+    """From the disks if already made, else made from the first readable copy and saved."""
+    cached = read_cached(data_dirs, hash_)
+    if cached is not None:
+        return cached
+    for source in sources:
+        try:
+            data = make_thumbnail(source)
+        except NoThumbnail:
+            continue
+        store(data_dirs, hash_, data)
+        return data
+    return None
+
+
+def missing(data_dirs: list[Path], records) -> list:
+    """Records of photos without a thumbnail on every disk."""
+    return [
+        record
+        for record in records
+        if can_have_thumbnail(record.path)
+        and not all(cache_path(d, record.hash).exists() for d in data_dirs)
+    ]
+
+
+def fill(
+    data_dirs: list[Path],
+    archives: list[Path],
+    records,
+    *,
+    on_progress=None,
+    should_stop=None,
+) -> int:
+    """Make the missing thumbnails; returns how many were made or copied."""
+    todo = missing(data_dirs, records)
+    for n, record in enumerate(todo):
+        if should_stop and should_stop():
+            break
+        sources = [archive.joinpath(*record.path.split("/")) for archive in archives]
+        thumbnail(data_dirs, sources, record.hash)
+        if on_progress:
+            on_progress(n + 1, len(todo))
+    return len(todo)

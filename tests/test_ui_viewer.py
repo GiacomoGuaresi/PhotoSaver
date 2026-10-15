@@ -21,9 +21,7 @@ def ui(qtbot, dev):
     controller.start()
     qtbot.waitUntil(lambda: controller.mode == HOME)
     yield window, controller
-    controller.session.stop()
-    if isinstance(window.current, ViewerScreen):
-        window.current.loader.wait()
+    controller.shutdown()
 
 
 def entries(viewer):
@@ -68,8 +66,7 @@ def test_one_disk_is_enough(qtbot, dev):
     viewer = controller.show_viewer()
     viewer.show_folder("FOTO 2025/LAGO 2025")
     qtbot.waitUntil(lambda: viewer.model.index(0).data(0x1) is not None, timeout=5000)
-    controller.session.stop()
-    viewer.loader.wait()
+    controller.shutdown()
 
 
 def test_photo_that_cant_be_read(qtbot, ui, dev):
@@ -82,3 +79,32 @@ def test_photo_that_cant_be_read(qtbot, ui, dev):
     viewer.model.index(0).data(0x1)
     qtbot.waitUntil(lambda: viewer.loader.failed(record.hash), timeout=5000)
     assert viewer.model.index(0).data(0x1) is None
+
+
+def cached(dev):
+    return {
+        disk: len(list((dev / disk / ".photosaver" / "miniature").rglob("*.jpg")))
+        for disk in ("disk-a", "disk-b")
+    }
+
+
+def test_thumbnails_are_made_in_the_background(qtbot, ui, dev):
+    # 41 files, one is a video
+    qtbot.waitUntil(lambda: cached(dev) == {"disk-a": 40, "disk-b": 40}, timeout=20000)
+
+
+def test_viewer_saves_thumbnails_on_the_disks(qtbot, ui, dev):
+    window, controller = ui
+    controller.stop_thumbnails()
+    viewer = controller.show_viewer()
+    viewer.show_folder("FOTO 2025/LAGO 2025")
+    for row in range(viewer.model.rowCount()):
+        viewer.model.index(row).data(0x1)
+    viewer.loader.wait()
+    assert cached(dev)["disk-a"] >= 14 and cached(dev)["disk-b"] >= 14
+
+
+def test_operations_stop_the_background_thumbnails(qtbot, ui):
+    window, controller = ui
+    window.current.add.click()
+    assert controller._filler is None

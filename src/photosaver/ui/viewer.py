@@ -26,6 +26,7 @@ from PySide6.QtWidgets import (
 
 from ..core import scanner
 from ..core.browse import Folder
+from ..core.disk import Disk
 from ..core.index import FileRecord
 from . import theme
 from .screen import Screen
@@ -164,11 +165,12 @@ class ViewerScreen(Screen):
 
     open_requested = Signal(list, int)
 
-    def __init__(self, root: Folder, disks_roots: list[Path], parent: QWidget | None = None):
+    def __init__(self, root: Folder, disks: list[Disk], parent: QWidget | None = None):
         super().__init__(self.tr("Your photos"), parent=parent)
         self.root = root
-        self.archives = disks_roots  # the archive folder of each connected disk
-        self.loader = ThumbnailLoader(self._sources, self)
+        self.disks = disks
+        self.archives = [disk.archive for disk in disks]
+        self.loader = ThumbnailLoader(self._sources, [disk.data_dir for disk in disks], self)
 
         splitter = QSplitter()
         self.tree = QTreeWidget()

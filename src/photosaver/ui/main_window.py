@@ -73,6 +73,12 @@ class DiskBar(QFrame):
 
 
 class MainWindow(QMainWindow):
+    closing = Signal()
+
+    def closeEvent(self, event) -> None:  # noqa: N802 (Qt)
+        self.closing.emit()
+        super().closeEvent(event)
+
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
         self.setWindowTitle("PhotoSaver")

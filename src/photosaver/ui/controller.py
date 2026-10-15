@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QLocale, QObject
 
-from ..core import browse, detect, status, trash
+from ..core import browse, detect, status, thumbs, trash
 from ..core.archive import Archive
 from . import theme
 from .add_photos import AddPhotosFlow
@@ -45,8 +45,10 @@ class Controller(QObject):
         self.startup: status.Startup | None = None
         self._busy = False
         self._workers: set[Worker] = set()
+        self._filler: Worker | None = None
         session.changed.connect(self.on_changed)
         window.disk_bar.done_requested.connect(self.finish)
+        window.closing.connect(self.shutdown)
         menu = window.disk_bar.menu
         self.history_action = menu.addAction(
             theme.icon("history"), self.tr("History"), self.show_history
@@ -62,7 +64,42 @@ class Controller(QObject):
     @busy.setter
     def busy(self, value: bool) -> None:
         self._busy = value
+        if value:
+            self.stop_thumbnails()
         self._update_menu()
+
+    # Thumbnails made in the background, while nothing else is going on
+
+    def start_thumbnails(self) -> None:
+        if self._filler is not None or self._busy:
+            return
+        disks = list(self.disks)
+
+        def job(on_progress, should_stop):
+            with Archive.open(disks) as archive:
+                records = list(archive.index.files())
+            return thumbs.fill(
+                [d.data_dir for d in disks],
+                [d.archive for d in disks],
+                records,
+                on_progress=on_progress,
+                should_stop=should_stop,
+            )
+
+        worker = Worker(job, self)
+        worker.finished.connect(lambda: self._filler_done(worker))
+        self._filler = worker
+        worker.start(Worker.Priority.LowestPriority)
+
+    def _filler_done(self, worker: Worker) -> None:
+        if self._filler is worker:
+            self._filler = None
+
+    def stop_thumbnails(self) -> None:
+        if self._filler is not None:
+            self._filler.cancel()
+            self._filler.wait(10000)
+            self._filler = None
 
     def _update_menu(self) -> None:
         available = bool(self.session.assessment.disks) and not self._busy
@@ -82,6 +119,7 @@ class Controller(QObject):
 
     def on_changed(self) -> None:
         found, assessment = self.session.found, self.session.assessment
+        self.stop_thumbnails()
         self._update_disk_bar()
         self._update_menu()
         if self.mode == DONE or self.busy:
@@ -168,6 +206,8 @@ class Controller(QObject):
             home.status.set(self.tr("Your photos are safe on both disks."), "safe")
         # Disks may have changed while checking
         self.on_changed()
+        if self.mode == HOME:
+            self.start_thumbnails()
 
     def recover(self) -> None:
         disks = list(self.disks)
@@ -223,7 +263,7 @@ class Controller(QObject):
         folders = {f for disk in disks for f in browse.disk_folders(disk.archive)}
         root = browse.build_tree(records, sorted(folders))
         self._home()
-        return self.window.open(ViewerScreen(root, [disk.archive for disk in disks]))
+        return self.window.open(ViewerScreen(root, disks))
 
     # History and trash
 
@@ -306,7 +346,19 @@ class Controller(QObject):
 
     # Finishing
 
+    def shutdown(self) -> None:
+        """Stop everything running in the background (closing the app)."""
+        self.session.stop()
+        self.stop_thumbnails()
+        for worker in list(self._workers):
+            worker.cancel()
+            worker.wait(10000)
+        screen = self.window.current
+        if isinstance(screen, ViewerScreen):
+            screen.loader.wait()
+
     def finish(self) -> None:
+        self.stop_thumbnails()
         for worker in list(self._workers):
             worker.cancel()
             worker.wait(5000)
