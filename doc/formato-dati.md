@@ -6,7 +6,8 @@ cartella dell'archivio, leggibili anche senza l'app.
 ```
 <disco>/
 ├── .photosaver/
-│   └── disk.json        identità del disco
+│   ├── disk.json        identità del disco
+│   └── index.sqlite     indice dell'archivio
 └── <cartella archivio>/ le foto (es. Foto/)
 ```
 
@@ -35,3 +36,27 @@ cartella dell'archivio, leggibili anche senza l'app.
 Il file si scrive in modo atomico (file temporaneo → `fsync` → rinomina), così
 un'interruzione lascia il file vecchio o quello nuovo, mai uno a metà.
 Inizializzare una cartella che è già un disco viene rifiutato.
+
+## `index.sqlite`
+
+Database SQLite, **uguale su tutti i dischi** dell'archivio. Descrive cosa
+l'archivio deve contenere e com'è ogni copia su ogni disco.
+
+| Tabella | Contenuto |
+|---|---|
+| `meta` | `archive_id`, `hash_algorithm` (`blake2b-256`), `revision`, `created` |
+| `disks` | un record per disco: id, nome, data di aggiunta |
+| `files` | un record per file: percorso relativo alla cartella archivio (con `/`), dimensione, data di modifica (ns), hash, data di aggiunta |
+| `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`) e data dell'ultima verifica del contenuto |
+| `events` | storico delle operazioni: data, tipo, percorso, disco, dettagli JSON |
+
+- I dischi sono **righe, non colonne**: una terza copia non cambia lo schema.
+- **Versione dello schema** in `PRAGMA user_version`; all'apertura l'app applica
+  le migrazioni mancanti, e rifiuta un indice scritto da un'app più nuova.
+- Ogni scrittura avviene in una **transazione**, che incrementa `revision`.
+  Confrontando le revisioni si capisce quale disco ha l'indice più recente dopo
+  un'interruzione.
+- Niente WAL (`journal_mode = DELETE`, `synchronous = FULL`): il WAL usa memoria
+  condivisa, poco affidabile su dischi rimovibili exFAT.
+- La copia dell'indice su un altro disco usa l'API di backup di SQLite e una
+  rinomina atomica.
