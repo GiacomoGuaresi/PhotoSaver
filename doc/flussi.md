@@ -241,6 +241,23 @@ Spostati (1)
 Per ogni voce si può anche scegliere **"segna come noto"**, così non viene più
 riproposta.
 
+| Caso | Azioni possibili | Proposta |
+|---|---|---|
+| Corrotto su un disco | ripara dalla copia buona · noto | **ripara** |
+| Corrotto ovunque | noto | — |
+| Mancante su un disco che non l'ha mai avuto (es. disco sostituito) | copia · cancella ovunque · noto | **copia** |
+| Mancante su un disco che l'aveva | copia · cancella ovunque · noto | da scegliere |
+| Mancante ovunque | dimentica · noto | — |
+| Modificato su un disco | ripristina l'originale · tieni la versione di A/B · noto | da scegliere |
+| Modificato uguale ovunque | accetta · noto | **accetta** |
+| Spostato su un disco | ripeti sugli altri · annulla · noto | **ripeti** |
+| Spostato uguale ovunque | accetta · annulla · noto | **accetta** |
+| Aggiunto a mano (stesso contenuto) | aggiungi (e copia sugli altri) · cancella · noto | **aggiungi** |
+| Aggiunto a mano con contenuti diversi | cancella · noto | — |
+| Problemi diversi su dischi diversi | ripara · noto | — |
+
+I file sostituiti o cancellati finiscono nel cestino del loro disco.
+
 ## 5. Archivio (visualizzatore)
 
 ```

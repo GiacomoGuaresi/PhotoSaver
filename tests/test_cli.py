@@ -97,7 +97,9 @@ def test_check(dev, capsys):
 
     next((dev / "disk-b" / "Foto").rglob("*.jpg")).unlink()
     assert cli.main(["check", "--disks", a, b]) == 1
-    assert "missing   B  " in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "missing   B  " in out
+    assert ": (to choose)   [copy, delete_all, known]" in out
 
     assert cli.main(["check", "--disks", a]) == 0
     assert "Not connected: B" in capsys.readouterr().out

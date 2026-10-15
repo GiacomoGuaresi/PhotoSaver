@@ -48,7 +48,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 | 2.4 | **Check completo** con hash, ripresa dopo un'interruzione, riconoscimento della corruzione (hash diverso + stessa data) | `feat(check): full check with bit rot detection` | ✅ |
 | 2.5 | Riconoscimento di **spostamenti e rinomine** tramite hash | `feat(check): detect moves` | ✅ |
 | 2.6 | **Cestino** (a tempo e manuale) e **problemi noti** | `feat(core): trash and known issues` | ✅ |
-| 2.7 | **Azioni**: ripara, copia mancanti, propaga cancellazioni e spostamenti; azione proposta per i casi ovvi | `feat(check): resolution actions` | ⬜ |
+| 2.7 | **Azioni**: ripara, copia mancanti, propaga cancellazioni e spostamenti; azione proposta per i casi ovvi | `feat(check): resolution actions` | ✅ |
 | 2.8 | **Journal delle operazioni**: un'operazione interrotta si riconosce e si completa o annulla; indici di A e B riallineati | `feat(core): operation journal` | ⬜ |
 | 2.9 | Script per gli **scenari di guasto** in `dev_disks.py` + test end-to-end | `test: failure scenarios` | ⬜ |
 

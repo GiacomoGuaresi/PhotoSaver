@@ -4,7 +4,7 @@ python -m photosaver.cli init  DISK --label A [--archive-dir Foto]
 python -m photosaver.cli init  DISK --label B --join OTHER_DISK
 python -m photosaver.cli scan  FOLDER
 python -m photosaver.cli status DISK
-python -m photosaver.cli check --disks A B [--full]
+python -m photosaver.cli check --disks A B [--full] [--fix]
 python -m photosaver.cli upload --disks A B --dest "FOTO 2026/MARE" FOLDER [--apply]
 """
 
@@ -15,7 +15,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from .core import archive, check, scanner, upload
+from .core import archive, check, resolve, scanner, upload
 from .core.disk import DiskError, open_disk
 
 SHOWN = 10  # list items shown before "… and N more"
@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     chk = commands.add_parser("check", help="compare the disks with the index")
     chk.add_argument("--disks", type=Path, nargs="+", required=True)
     chk.add_argument("--full", action="store_true", help="read every file (bit rot)")
+    chk.add_argument("--fix", action="store_true", help="apply the proposed actions")
 
     args = parser.parse_args(argv)
     commands_ = {
@@ -148,6 +149,21 @@ def _check(args) -> int:
             print(f"  {diff.kind:9} {labels[diff.disk_id]}  {diff.path}{moved}")
         for disk_id, path, reason in report.errors:
             print(f"  error     {labels[disk_id]}  {path}: {reason}")
+        if report.known:
+            print(f"  ({report.known} known issues not shown)")
+
+        issues = resolve.build_issues(report, arch)
+        if issues:
+            print("Proposed actions:")
+        for issue in issues:
+            proposed = issue.proposed.action if issue.proposed else "(to choose)"
+            options = ", ".join(o.action for o in issue.options)
+            print(f"  {issue.kind:9} {issue.path}: {proposed}   [{options}]")
+        if args.fix and issues:
+            outcome = resolve.apply(issues, arch)
+            print(f"Fixed {len(outcome.done)}, failed {len(outcome.failed)}")
+            for issue, reason in outcome.failed:
+                print(f"  failed: {issue.path}: {reason}")
         return 0 if report.clean else 1
 
 
