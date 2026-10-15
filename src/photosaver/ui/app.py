@@ -42,6 +42,13 @@ def create_application(argv: list[str] | None = None) -> QApplication:
     app.setOrganizationName(APP_NAME)
     app.setApplicationVersion(__version__)
     app.setWindowIcon(theme.icon("shield-check", theme.ACCENT))
+    if not app.property("photosaver_english"):
+        # English plural forms ("1 photo", "2 photos"); the user's language, installed
+        # later by install_translations, takes precedence
+        english = QTranslator(app)
+        if english.load(str(I18N_DIR / "photosaver_en.qm")):
+            app.installTranslator(english)
+            app.setProperty("photosaver_english", True)
     theme.apply_theme(app)
     return app
 

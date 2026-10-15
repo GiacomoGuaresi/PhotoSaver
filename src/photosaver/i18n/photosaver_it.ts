@@ -345,82 +345,97 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
 <context>
     <name>Controller</name>
     <message>
-        <location filename="../ui/controller.py" line="85" />
+        <location filename="../ui/controller.py" line="53" />
+        <source>History</source>
+        <translation>Storico</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="55" />
+        <source>Trash</source>
+        <translation>Cestino</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="113" />
         <source>Disk %1</source>
         <translation>Disco %1</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="88" />
+        <location filename="../ui/controller.py" line="116" />
         <source>not connected</source>
         <translation>non collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="91" />
+        <location filename="../ui/controller.py" line="119" />
         <source>connected</source>
         <translation>collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="94" />
+        <location filename="../ui/controller.py" line="122" />
         <source>connected · %1 free</source>
         <translation>collegato · %1 liberi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="103" />
+        <location filename="../ui/controller.py" line="131" />
         <source>Perfect, both disks are here</source>
         <translation>Perfetto, ho trovato entrambi i dischi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="104" />
+        <location filename="../ui/controller.py" line="132" />
         <source>I'm checking that all the photos are fine… it takes a few seconds.</source>
         <translation>Sto controllando che le foto siano tutte a posto… ci vuole qualche secondo.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="121" />
+        <location filename="../ui/controller.py" line="149" />
         <source>Last time something was interrupted. Your photos are safe: I'll fix it.</source>
         <translation>L'ultima volta qualcosa si è interrotto. Le tue foto sono al sicuro: sistemo io.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="123" />
+        <location filename="../ui/controller.py" line="151" />
         <source>Fix</source>
         <translation>Sistema</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/controller.py" line="128" />
+        <location filename="../ui/controller.py" line="156" />
         <source>I found %n thing(s) to sort out on the disks.</source>
         <translation><numerusform>Ho trovato %n cosa da sistemare sui dischi.</numerusform><numerusform>Ho trovato %n cose da sistemare sui dischi.</numerusform></translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="130" />
+        <location filename="../ui/controller.py" line="158" />
         <source>Let's look together</source>
         <translation>Vediamo insieme</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="135" />
+        <location filename="../ui/controller.py" line="163" />
         <source>Some files can't be read. Run a check of the disks.</source>
         <translation>Alcuni file non si riescono a leggere. Fai un controllo dei dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="137" />
+        <location filename="../ui/controller.py" line="165" />
         <source>Check</source>
         <translation>Controlla</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="141" />
+        <location filename="../ui/controller.py" line="169" />
         <source>Your photos are safe on both disks.</source>
         <translation>Le tue foto sono al sicuro su entrambi i dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="147" />
+        <location filename="../ui/controller.py" line="175" />
         <source>I'm finishing what was interrupted…</source>
         <translation>Sto completando quello che si era interrotto…</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="203" />
+        <location filename="../ui/controller.py" line="256" />
+        <source>Some photos could not be restored: a photo with the same name is already there.</source>
+        <translation>Alcune foto non si sono potute ripristinare: c'è già una foto con lo stesso nome.</translation>
+    </message>
+    <message>
+        <location filename="../ui/controller.py" line="282" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation>Stai guardando solo il Disco %1. Per aggiungere foto collega anche il Disco %2.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="245" />
+        <location filename="../ui/controller.py" line="324" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation>Qualcosa non è andato, le tue foto non sono state toccate: %1</translation>
     </message>
@@ -554,6 +569,24 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <location filename="../ui/check_flow.py" line="113" />
         <source>Hide the photos</source>
         <translation>Nascondi le foto</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryScreen</name>
+    <message>
+        <location filename="../ui/history_trash.py" line="99" />
+        <source>History</source>
+        <translation>Storico</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="100" />
+        <source>Everything done on your photos, most recent first.</source>
+        <translation>Tutto quello che è stato fatto sulle tue foto, dal più recente.</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="115" />
+        <source>Nothing yet.</source>
+        <translation>Ancora niente.</translation>
     </message>
 </context>
 <context>
@@ -911,6 +944,170 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <location filename="../ui/issues.py" line="146" />
         <source>Leave it as it is, don't tell me again</source>
         <translation>Lascia così, non dirmelo più</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="65" />
+        <source>You prepared Disk 1</source>
+        <translation>Hai preparato il Disco 1</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="68" />
+        <source>You prepared Disk %1</source>
+        <translation>Hai preparato il Disco %1</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="70" />
+        <source>Added %n photo(s)</source>
+        <translation><numerusform>Aggiunta %n foto</numerusform><numerusform>Aggiunte %n foto</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="72" />
+        <source>(stopped before the end)</source>
+        <translation>(interrotto prima della fine)</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="77" />
+        <source>Thorough check: %n thing(s) to sort out</source>
+        <translation><numerusform>Controllo approfondito: %n cosa da sistemare</numerusform><numerusform>Controllo approfondito: %n cose da sistemare</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="78" />
+        <source>Thorough check: all good</source>
+        <translation>Controllo approfondito: tutto a posto</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="80" />
+        <source>Repaired %n photo(s)</source>
+        <translation><numerusform>Riparata %n foto</numerusform><numerusform>Riparate %n foto</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="81" />
+        <source>Deleted %n photo(s) (to the trash)</source>
+        <translation><numerusform>Cancellata %n foto (nel cestino)</numerusform><numerusform>Cancellate %n foto (nel cestino)</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="82" />
+        <source>Removed %n photo(s) from the list</source>
+        <translation><numerusform>Tolta %n foto dall'elenco</numerusform><numerusform>Tolte %n foto dall'elenco</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="83" />
+        <source>Kept the new version of %n photo(s)</source>
+        <translation><numerusform>Tenuta la versione nuova di %n foto</numerusform><numerusform>Tenuta la versione nuova di %n foto</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="84" />
+        <source>Accepted %n change(s) made without the app</source>
+        <translation><numerusform>Accettata %n modifica fatta senza l'app</numerusform><numerusform>Accettate %n modifiche fatte senza l'app</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="85" />
+        <source>Moved %n photo(s)</source>
+        <translation><numerusform>Spostata %n foto</numerusform><numerusform>Spostate %n foto</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="86" />
+        <source>Put back %n photo(s) where they were</source>
+        <translation><numerusform>Rimessa %n foto dov'era</numerusform><numerusform>Rimesse %n foto dov'erano</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="87" />
+        <source>Added %n photo(s) found on the disks</source>
+        <translation><numerusform>Aggiunta %n foto trovata sui dischi</numerusform><numerusform>Aggiunte %n foto trovate sui dischi</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="88" />
+        <source>%n problem(s) marked as known</source>
+        <translation><numerusform>%n problema segnato come noto</numerusform><numerusform>%n problemi segnati come noti</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="89" />
+        <source>Restored %n file(s) from the trash</source>
+        <translation><numerusform>Ripristinato %n file dal cestino</numerusform><numerusform>Ripristinati %n file dal cestino</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="90" />
+        <source>Emptied the trash (%n file(s))</source>
+        <translation><numerusform>Svuotato il cestino (%n file)</numerusform><numerusform>Svuotato il cestino (%n file)</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="91" />
+        <source>Finished %n interrupted operation(s)</source>
+        <translation><numerusform>Completata %n operazione interrotta</numerusform><numerusform>Completate %n operazioni interrotte</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>TrashScreen</name>
+    <message>
+        <location filename="../ui/history_trash.py" line="149" />
+        <source>Trash</source>
+        <translation>Cestino</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="151" />
+        <source>Photos deleted or replaced by the app. They are deleted for good after %n day(s).</source>
+        <translation><numerusform>Foto cancellate o sostituite dall'app. Vengono eliminate definitivamente dopo %n giorno.</numerusform><numerusform>Foto cancellate o sostituite dall'app. Vengono eliminate definitivamente dopo %n giorni.</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="161" />
+        <source>Photo</source>
+        <translation>Foto</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="162" />
+        <source>Folder</source>
+        <translation>Cartella</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="163" />
+        <source>Deleted</source>
+        <translation>Cancellata</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="164" />
+        <source>Deleted for good in</source>
+        <translation>Eliminata definitivamente tra</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="177" />
+        <source>%n day(s)</source>
+        <translation><numerusform>%n giorno</numerusform><numerusform>%n giorni</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="187" />
+        <source>%n file(s)</source>
+        <translation><numerusform>%n file</numerusform><numerusform>%n file</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="193" />
+        <source>Connect both disks to restore photos or empty the trash.</source>
+        <translation>Collega entrambi i dischi per ripristinare le foto o svuotare il cestino.</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="196" />
+        <source>Restore</source>
+        <translation>Ripristina</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="199" />
+        <location filename="../ui/history_trash.py" line="217" />
+        <source>Empty the trash</source>
+        <translation>Svuota il cestino</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/history_trash.py" line="219" />
+        <source>Delete for good %n file(s)? This can't be undone.</source>
+        <translation><numerusform>Eliminare definitivamente %n file? Non si può tornare indietro.</numerusform><numerusform>Eliminare definitivamente %n file? Non si può tornare indietro.</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="221" />
+        <source>Yes, delete them for good</source>
+        <translation>Sì, eliminali definitivamente</translation>
+    </message>
+    <message>
+        <location filename="../ui/history_trash.py" line="223" />
+        <source>Delete for good</source>
+        <translation>Elimina definitivamente</translation>
     </message>
 </context>
 <context>

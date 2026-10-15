@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from . import check, resolve
+from . import check, resolve, trash
 from .archive import Archive
 from .disk import Disk
 
@@ -15,6 +15,7 @@ class Startup:
     interrupted: int = 0  # actions left unfinished last time
     issues: list[resolve.Issue] = field(default_factory=list)
     errors: int = 0  # unreadable files or folders
+    emptied: int = 0  # files deleted for good from the trash, too old
     files: int = 0
     size: int = 0
 
@@ -29,11 +30,16 @@ def startup_check(
     on_progress: Callable[[int, int], None] | None = None,
     should_stop: Callable[[], bool] | None = None,
 ) -> Startup:
-    """Realign the indexes if needed, then run the quick check."""
+    """Realign the indexes, empty the old files of the trash, run the quick check."""
     with Archive.open(disks) as archive:
         if archive.stale and archive.complete:
             archive.sync_indexes()
-        result = Startup(interrupted=len(resolve.pending(archive)))
+        emptied = 0
+        if archive.complete:
+            emptied = trash.empty(archive, older_than_days=trash.DEFAULT_DAYS)
+            if emptied:
+                archive.sync_indexes()
+        result = Startup(interrupted=len(resolve.pending(archive)), emptied=emptied)
         result.files, result.size = archive.index.count_files()
         report = check.quick_check(archive, on_progress=on_progress, should_stop=should_stop)
         result.issues = resolve.build_issues(report, archive)

@@ -10,13 +10,17 @@ from __future__ import annotations
 
 from PySide6.QtCore import QLocale, QObject, Signal
 
-from ..core import detect, status
+from ..core import detect, status, trash
+from ..core.archive import Archive
+from . import theme
 from .add_photos import AddPhotosFlow
 from .check_flow import CheckFlow
 from .connect import BusyScreen, ConnectScreen, DoneScreen
+from .history_trash import HistoryScreen, TrashScreen
 from .home import HomeScreen
 from .main_window import MainWindow
 from .prepare import PrepareFlow
+from .screen import Banner
 from .session import Session, disk_name
 from .workers import Worker
 
@@ -40,10 +44,33 @@ class Controller(QObject):
         self.session = session
         self.mode = ""
         self.startup: status.Startup | None = None
-        self.busy = False  # an operation is running: screens are not switched under it
+        self._busy = False
         self._workers: set[Worker] = set()
         session.changed.connect(self.on_changed)
         window.disk_bar.done_requested.connect(self.finish)
+        menu = window.disk_bar.menu
+        self.history_action = menu.addAction(
+            theme.icon("history"), self.tr("History"), self.show_history
+        )
+        self.trash_action = menu.addAction(theme.icon("trash-2"), self.tr("Trash"), self.show_trash)
+        self._update_menu()
+
+    @property
+    def busy(self) -> bool:
+        """An operation is running: screens are not switched under it."""
+        return self._busy
+
+    @busy.setter
+    def busy(self, value: bool) -> None:
+        self._busy = value
+        self._update_menu()
+
+    def _update_menu(self) -> None:
+        available = bool(self.session.assessment.disks) and not self._busy
+        available &= self.session.assessment.situation in (detect.COMPLETE, detect.PARTIAL)
+        available &= self.mode in (HOME, READ_ONLY)
+        self.history_action.setEnabled(available)
+        self.trash_action.setEnabled(available)
 
     @property
     def disks(self):
@@ -57,6 +84,7 @@ class Controller(QObject):
     def on_changed(self) -> None:
         found, assessment = self.session.found, self.session.assessment
         self._update_disk_bar()
+        self._update_menu()
         if self.mode == DONE or self.busy:
             return
         situation = assessment.situation
@@ -186,6 +214,57 @@ class Controller(QObject):
         flow = CheckFlow(self.window, list(self.disks), self.run, size, self)
         flow.finished.connect(self._flow_finished)
         flow.start(quick_now=quick_now)
+
+    # History and trash
+
+    def show_history(self) -> None:
+        with Archive.open(list(self.disks)) as archive:
+            events = archive.index.events()
+            labels = {d.id: d.label for d in archive.index.disks()}
+        self._home()
+        self.window.open(HistoryScreen(events, labels))
+        self._update_menu()
+
+    def show_trash(self, replace: bool = False) -> None:
+        with Archive.open(list(self.disks)) as archive:
+            entries = archive.index.trash()
+        screen = TrashScreen(entries, self.session.assessment.situation == detect.COMPLETE)
+        screen.restore_requested.connect(self._restore)
+        screen.empty_requested.connect(self._empty_trash)
+        if replace:
+            self.window.replace(screen)
+        else:
+            self._home()
+            self.window.open(screen)
+
+    def _restore(self, files) -> None:
+        problems = []
+        with Archive.open(list(self.disks)) as archive:
+            for file in files:
+                for entry in file.entries:
+                    try:
+                        trash.restore(archive, entry)
+                    except OSError as error:
+                        problems.append(f"{file.path}: {error.strerror or error}")
+            archive.sync_indexes()
+        self.show_trash(replace=True)
+        if problems:
+            self.window.current.body.insertWidget(
+                0,
+                Banner(
+                    self.tr(
+                        "Some photos could not be restored: "
+                        "a photo with the same name is already there."
+                    ),
+                    "warning",
+                ),
+            )
+
+    def _empty_trash(self) -> None:
+        with Archive.open(list(self.disks)) as archive:
+            trash.empty(archive)
+            archive.sync_indexes()
+        self.show_trash(replace=True)
 
     # Read-only
 

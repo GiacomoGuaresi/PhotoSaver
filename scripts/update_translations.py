@@ -16,12 +16,14 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from translations_en import plural_forms
 from translations_it import ITALIAN
 
 ROOT = Path(__file__).resolve().parent.parent
 UI = ROOT / "src" / "photosaver" / "ui"
 I18N = ROOT / "src" / "photosaver" / "i18n"
 TS = I18N / "photosaver_it.ts"
+TS_EN = I18N / "photosaver_en.ts"
 
 
 def run(*args: str) -> None:
@@ -51,12 +53,31 @@ def fill(ts: Path) -> list[str]:
     return missing
 
 
+def fill_english(ts: Path) -> None:
+    """Only plural forms: other texts are already English."""
+    tree = ET.parse(ts)
+    for message in tree.getroot().iter("message"):
+        if message.get("numerus") != "yes":
+            continue
+        translation = message.find("translation")
+        translation.attrib.pop("type", None)
+        for child in list(translation):
+            translation.remove(child)
+        translation.text = None
+        for form in plural_forms(message.find("source").text or ""):
+            ET.SubElement(translation, "numerusform").text = form
+    tree.write(ts, encoding="utf-8", xml_declaration=True)
+
+
 def main() -> int:
     I18N.mkdir(parents=True, exist_ok=True)
     sources = sorted(str(p.relative_to(ROOT)) for p in UI.glob("*.py"))
     run("pyside6-lupdate", *sources, "-no-obsolete", "-target-language", "it_IT", "-ts", str(TS))
     missing = fill(TS)
     run("pyside6-lrelease", str(TS), "-qm", str(TS.with_suffix(".qm")))
+    run("pyside6-lupdate", *sources, "-no-obsolete", "-target-language", "en", "-ts", str(TS_EN))
+    fill_english(TS_EN)
+    run("pyside6-lrelease", str(TS_EN), "-qm", str(TS_EN.with_suffix(".qm")))
     if missing:
         print("Missing Italian translations:", *missing, sep="\n  ", file=sys.stderr)
         return 1

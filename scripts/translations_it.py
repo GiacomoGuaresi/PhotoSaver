@@ -330,4 +330,86 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     "Add them to your photos": "Aggiungi alle tue foto",
     "Delete them (they go to the trash)": "Cancella (va nel cestino)",
     "Leave it as it is, don't tell me again": "Lascia così, non dirmelo più",
+    # History and trash
+    "History": "Storico",
+    "Trash": "Cestino",
+    "Some photos could not be restored: a photo with the same name is already there.": (
+        "Alcune foto non si sono potute ripristinare: c'è già una foto con lo stesso nome."
+    ),
+    "Everything done on your photos, most recent first.": (
+        "Tutto quello che è stato fatto sulle tue foto, dal più recente."
+    ),
+    "Nothing yet.": "Ancora niente.",
+    "You prepared Disk 1": "Hai preparato il Disco 1",
+    "You prepared Disk %1": "Hai preparato il Disco %1",
+    "Added %n photo(s)": ("Aggiunta %n foto", "Aggiunte %n foto"),
+    "(stopped before the end)": "(interrotto prima della fine)",
+    "Thorough check: %n thing(s) to sort out": (
+        "Controllo approfondito: %n cosa da sistemare",
+        "Controllo approfondito: %n cose da sistemare",
+    ),
+    "Thorough check: all good": "Controllo approfondito: tutto a posto",
+    "Repaired %n photo(s)": ("Riparata %n foto", "Riparate %n foto"),
+    "Deleted %n photo(s) (to the trash)": (
+        "Cancellata %n foto (nel cestino)",
+        "Cancellate %n foto (nel cestino)",
+    ),
+    "Removed %n photo(s) from the list": (
+        "Tolta %n foto dall'elenco",
+        "Tolte %n foto dall'elenco",
+    ),
+    "Kept the new version of %n photo(s)": (
+        "Tenuta la versione nuova di %n foto",
+        "Tenuta la versione nuova di %n foto",
+    ),
+    "Accepted %n change(s) made without the app": (
+        "Accettata %n modifica fatta senza l'app",
+        "Accettate %n modifiche fatte senza l'app",
+    ),
+    "Moved %n photo(s)": ("Spostata %n foto", "Spostate %n foto"),
+    "Put back %n photo(s) where they were": (
+        "Rimessa %n foto dov'era",
+        "Rimesse %n foto dov'erano",
+    ),
+    "Added %n photo(s) found on the disks": (
+        "Aggiunta %n foto trovata sui dischi",
+        "Aggiunte %n foto trovate sui dischi",
+    ),
+    "%n problem(s) marked as known": (
+        "%n problema segnato come noto",
+        "%n problemi segnati come noti",
+    ),
+    "Restored %n file(s) from the trash": (
+        "Ripristinato %n file dal cestino",
+        "Ripristinati %n file dal cestino",
+    ),
+    "Emptied the trash (%n file(s))": (
+        "Svuotato il cestino (%n file)",
+        "Svuotato il cestino (%n file)",
+    ),
+    "Finished %n interrupted operation(s)": (
+        "Completata %n operazione interrotta",
+        "Completate %n operazioni interrotte",
+    ),
+    "Photos deleted or replaced by the app. They are deleted for good after %n day(s).": (
+        "Foto cancellate o sostituite dall'app. Vengono eliminate definitivamente dopo %n giorno.",
+        "Foto cancellate o sostituite dall'app. Vengono eliminate definitivamente dopo %n giorni.",
+    ),
+    "Photo": "Foto",
+    "Folder": "Cartella",
+    "Deleted": "Cancellata",
+    "Deleted for good in": "Eliminata definitivamente tra",
+    "%n day(s)": ("%n giorno", "%n giorni"),
+    "%n file(s)": ("%n file", "%n file"),
+    "Connect both disks to restore photos or empty the trash.": (
+        "Collega entrambi i dischi per ripristinare le foto o svuotare il cestino."
+    ),
+    "Restore": "Ripristina",
+    "Empty the trash": "Svuota il cestino",
+    "Delete for good %n file(s)? This can't be undone.": (
+        "Eliminare definitivamente %n file? Non si può tornare indietro.",
+        "Eliminare definitivamente %n file? Non si può tornare indietro.",
+    ),
+    "Yes, delete them for good": "Sì, eliminali definitivamente",
+    "Delete for good": "Elimina definitivamente",
 }
