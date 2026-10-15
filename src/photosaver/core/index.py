@@ -19,8 +19,10 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
+from . import hashing
+
 INDEX_FILE = "index.sqlite"
-HASH_ALGORITHM = "blake2b-256"
+HASH_ALGORITHM = hashing.ALGORITHM
 
 # Copy states, per file and disk
 OK = "ok"

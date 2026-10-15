@@ -34,7 +34,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 | 1.1 | **Disco**: `.photosaver/disk.json` (id disco, id archivio, cartella archivio); creazione e lettura | `feat(core): disk identity` | ✅ |
 | 1.2 | **Indice** SQLite con schema versionato, pensato per N dischi: file, hash, stato per disco, storico | `feat(core): versioned index` | ✅ |
 | 1.3 | **Scanner**: solo foto e video, conteggio dei file ignorati, file temporanei e `._*` di macOS esclusi | `feat(core): media scanner` | ✅ |
-| 1.4 | **Hash** in streaming (scelta: BLAKE2b della libreria standard o BLAKE3) | `feat(core): file hashing` | ⬜ |
+| 1.4 | **Hash** in streaming: SHA-256 (veloce, verificabile anche senza l'app) | `feat(core): file hashing` | ✅ |
 | 1.5 | **Copia sicura**: file `.partial` → flush → rilettura e verifica dell'hash → rinomina; data di modifica conservata | `feat(core): verified safe copy` | ⬜ |
 | 1.6 | **CLI di debug** (`python -m photosaver.cli`): init, scan, status | `feat(cli): debug commands` | ⬜ |
 

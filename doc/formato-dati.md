@@ -44,7 +44,7 @@ l'archivio deve contenere e com'è ogni copia su ogni disco.
 
 | Tabella | Contenuto |
 |---|---|
-| `meta` | `archive_id`, `hash_algorithm` (`blake2b-256`), `revision`, `created` |
+| `meta` | `archive_id`, `hash_algorithm` (`sha256`), `revision`, `created` |
 | `disks` | un record per disco: id, nome, data di aggiunta |
 | `files` | un record per file: percorso relativo alla cartella archivio (con `/`), dimensione, data di modifica (ns), hash, data di aggiunta |
 | `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`) e data dell'ultima verifica del contenuto |

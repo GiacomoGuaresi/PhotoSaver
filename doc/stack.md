@@ -15,7 +15,7 @@ Sì, per quasi tutto:
 | Esigenza | Come si copre |
 |---|---|
 | App desktop macOS / Windows / Linux | PySide6 + PyInstaller, come PrintPicker |
-| Copia con verifica, checksum | Libreria standard di Python (`hashlib`, `shutil`); thread in background |
+| Copia con verifica, checksum | Libreria standard di Python: **SHA-256** (`hashlib`), accelerato in hardware sulle CPU recenti e verificabile senza l'app (`sha256sum`, `certutil`); thread in background |
 | Indice e storico sui dischi | SQLite in una cartella nascosta su ogni disco (es. `.photosaver/`) |
 | Miniature JPG / HEIC / RAW | Pillow, pillow-heif, rawpy (già provati in PrintPicker) |
 | Video (miniature, anteprima) | Qt Multimedia per la riproduzione; un fotogramma per la miniatura |
