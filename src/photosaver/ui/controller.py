@@ -261,10 +261,14 @@ class Controller(QObject):
         disks = list(self.disks)
         with Archive.open(disks) as archive:
             records = list(archive.index.files())
+            known = archive.index.disks()
+            issues = self.startup.issues if self.startup else []
+            problems = browse.copy_problems(archive.index, [d.id for d in known], issues)
+        labels = {d.id: d.label for d in known}
         folders = {f for disk in disks for f in browse.disk_folders(disk.archive)}
         root = browse.build_tree(records, sorted(folders))
         self._home()
-        viewer = self.window.open(ViewerScreen(root, disks))
+        viewer = self.window.open(ViewerScreen(root, disks, problems, labels))
         viewer.open_requested.connect(lambda records, row: self.show_preview(disks, records, row))
         return viewer
 

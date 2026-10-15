@@ -425,17 +425,17 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <translation>Sto completando quello che si era interrotto…</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="315" />
+        <location filename="../ui/controller.py" line="319" />
         <source>Some photos could not be restored: a photo with the same name is already there.</source>
         <translation>Alcune foto non si sono potute ripristinare: c'è già una foto con lo stesso nome.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="341" />
+        <location filename="../ui/controller.py" line="345" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation>Stai guardando solo il Disco %1. Per aggiungere foto collega anche il Disco %2.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="398" />
+        <location filename="../ui/controller.py" line="402" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation>Qualcosa non è andato, le tue foto non sono state toccate: %1</translation>
     </message>
@@ -722,6 +722,44 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
         <location filename="../ui/preview.py" line="262" />
         <source>This photo can't be opened: it may be damaged.</source>
         <translation>Questa foto non si riesce ad aprire: potrebbe essere rovinata.</translation>
+    </message>
+</context>
+<context>
+    <name>ProblemTexts</name>
+    <message>
+        <location filename="../ui/viewer.py" line="61" />
+        <source>Disk %1</source>
+        <translation>Disco %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="63" />
+        <source>Missing on %1</source>
+        <translation>Manca sul %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="64" />
+        <source>Damaged on %1</source>
+        <translation>Rovinata sul %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="65" />
+        <source>Changed on %1</source>
+        <translation>Modificata sul %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="66" />
+        <source>Something is wrong on %1</source>
+        <translation>Qualcosa non va sul %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="68" />
+        <source>Check the disks to sort it out.</source>
+        <translation>Controlla i dischi per sistemare.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/viewer.py" line="71" />
+        <source>%n photo(s) here need attention. Check the disks.</source>
+        <translation><numerusform>Qui %n foto ha bisogno di attenzione. Controlla i dischi.</numerusform><numerusform>Qui %n foto hanno bisogno di attenzione. Controlla i dischi.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -1064,7 +1102,7 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
 <context>
     <name>TileDelegate</name>
     <message numerus="yes">
-        <location filename="../ui/viewer.py" line="148" />
+        <location filename="../ui/viewer.py" line="197" />
         <source>%n photo(s)</source>
         <translation><numerusform>%n foto</numerusform><numerusform>%n foto</numerusform></translation>
     </message>
@@ -1154,13 +1192,13 @@ Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
 <context>
     <name>ViewerScreen</name>
     <message>
-        <location filename="../ui/viewer.py" line="169" />
-        <location filename="../ui/viewer.py" line="237" />
+        <location filename="../ui/viewer.py" line="225" />
+        <location filename="../ui/viewer.py" line="298" />
         <source>Your photos</source>
         <translation>Le tue foto</translation>
     </message>
     <message>
-        <location filename="../ui/viewer.py" line="181" />
+        <location filename="../ui/viewer.py" line="237" />
         <source>All your photos</source>
         <translation>Tutte le tue foto</translation>
     </message>

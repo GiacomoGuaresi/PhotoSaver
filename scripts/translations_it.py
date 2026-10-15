@@ -424,4 +424,14 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     "This video can't be played on this computer.": (
         "Questo video non si riesce a riprodurre su questo computer."
     ),
+    # Badges
+    "Missing on %1": "Manca sul %1",
+    "Damaged on %1": "Rovinata sul %1",
+    "Changed on %1": "Modificata sul %1",
+    "Something is wrong on %1": "Qualcosa non va sul %1",
+    "Check the disks to sort it out.": "Controlla i dischi per sistemare.",
+    "%n photo(s) here need attention. Check the disks.": (
+        "Qui %n foto ha bisogno di attenzione. Controlla i dischi.",
+        "Qui %n foto hanno bisogno di attenzione. Controlla i dischi.",
+    ),
 }

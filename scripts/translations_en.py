@@ -31,6 +31,10 @@ ENGLISH_OVERRIDES: dict[str, tuple[str, str]] = {
         "They stay on the computer.",
     ),
     "… and %n more": ("… and %n more", "… and %n more"),
+    "%n photo(s) here need attention. Check the disks.": (
+        "%n photo here needs attention. Check the disks.",
+        "%n photos here need attention. Check the disks.",
+    ),
 }
 
 _SINGULAR = [(r"\(s\)", ""), (r"\bare\b", "is"), (r"\bwere\b", "was"), (r"\bhave\b", "has")]

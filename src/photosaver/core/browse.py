@@ -11,7 +11,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .index import FileRecord
+from .index import OK, FileRecord
 from .scanner import is_hidden
 
 
@@ -84,3 +84,35 @@ def disk_folders(archive_dir: Path) -> list[str]:
 
     walk(archive_dir, "")
     return found
+
+
+def copy_problems(index, disk_ids: list[str], issues=()) -> dict[str, dict[str, str]]:
+    """Files with a problem on some disk: path → {disk id: kind}.
+
+    Kinds are those of the last thorough check recorded in the index (missing, corrupt,
+    modified), updated with the ``issues`` of a more recent check. Copies never
+    verified are not problems.
+    """
+    problems: dict[str, dict[str, str]] = {}
+    for disk_id in disk_ids:
+        for path, copy in index.copies_on(disk_id).items():
+            if copy.state != OK:
+                problems.setdefault(path, {})[disk_id] = copy.state
+    for issue in issues:
+        if index.get_file(issue.path) is None:
+            continue  # files added outside the app are not in the viewer
+        for diff in issue.diffs:
+            kind = diff.kind if diff.kind != "moved" else "missing"
+            problems.setdefault(issue.path, {})[diff.disk_id] = kind
+    return problems
+
+
+def folder_problems(problems: dict[str, dict[str, str]]) -> dict[str, int]:
+    """How many files with problems in each folder, subfolders included ('' = all)."""
+    counts: dict[str, int] = {}
+    for path in problems:
+        parts = path.split("/")[:-1]
+        for depth in range(len(parts) + 1):
+            folder = "/".join(parts[:depth])
+            counts[folder] = counts.get(folder, 0) + 1
+    return counts

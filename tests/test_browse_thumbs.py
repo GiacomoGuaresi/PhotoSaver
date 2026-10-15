@@ -106,3 +106,23 @@ def test_fill_missing(tmp_path):
     assert thumbs.fill([data_dir], [archive], records) == 2
     assert thumbs.missing([data_dir], records) == []
     assert thumbs.fill([data_dir], [archive], records, should_stop=lambda: True) == 0
+
+
+def test_copy_problems(arch):
+    from conftest import put
+
+    from photosaver.core import check, resolve
+
+    put(arch, "FOTO/a.jpg", b"a")
+    put(arch, "FOTO/sub/b.jpg", b"b")
+    put(arch, "c.jpg", b"c")
+    a, b = arch.disks
+    with arch.index.transaction():
+        arch.index.set_copy("FOTO/a.jpg", b.id, "corrupt")
+    arch.path_on(a, "FOTO/sub/b.jpg").unlink()
+    put(arch, "new.jpg", b"n", disks=[a], index=False)
+    issues = resolve.build_issues(check.quick_check(arch), arch)
+
+    problems = browse.copy_problems(arch.index, [a.id, b.id], issues)
+    assert problems == {"FOTO/a.jpg": {b.id: "corrupt"}, "FOTO/sub/b.jpg": {a.id: "missing"}}
+    assert browse.folder_problems(problems) == {"": 2, "FOTO": 2, "FOTO/sub": 1}

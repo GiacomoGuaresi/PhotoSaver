@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from PySide6.QtCore import QAbstractListModel, QModelIndex, QRect, QSize, Qt, Signal
+from PySide6.QtCore import QAbstractListModel, QModelIndex, QObject, QRect, QSize, Qt, Signal
 from PySide6.QtGui import QColor, QFont, QPainter, QPen
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -25,16 +25,19 @@ from PySide6.QtWidgets import (
 )
 
 from ..core import scanner
-from ..core.browse import Folder
+from ..core.browse import Folder, folder_problems
 from ..core.disk import Disk
 from ..core.index import FileRecord
 from . import theme
 from .screen import Screen
+from .session import disk_name
 from .thumbnails import ThumbnailLoader
 
 CELL = 200  # pixels, the side of a tile
 GAP = 12
 ROLE_ENTRY = Qt.ItemDataRole.UserRole + 1
+ROLE_PROBLEM = Qt.ItemDataRole.UserRole + 2  # text of the problem, or None
+BADGE = 30
 
 
 @dataclass(frozen=True)
@@ -49,10 +52,39 @@ class Entry:
         return self.record.path.rsplit("/", 1)[-1]
 
 
+class ProblemTexts(QObject):
+    """Badges in words: what is wrong with a photo or a folder."""
+
+    def file(self, problems: dict[str, str], labels: dict[str, str]) -> str:
+        lines = []
+        for disk_id, kind in sorted(problems.items(), key=lambda p: labels.get(p[0], "")):
+            disk = self.tr("Disk %1").replace("%1", disk_name(labels.get(disk_id, "?")))
+            text = {
+                "missing": self.tr("Missing on %1"),
+                "corrupt": self.tr("Damaged on %1"),
+                "modified": self.tr("Changed on %1"),
+            }.get(kind, self.tr("Something is wrong on %1"))
+            lines.append(text.replace("%1", disk))
+        return "\n".join(lines) + "\n" + self.tr("Check the disks to sort it out.")
+
+    def folder(self, count: int) -> str:
+        return self.tr("%n photo(s) here need attention. Check the disks.", "", count)
+
+
 class GridModel(QAbstractListModel):
-    def __init__(self, loader: ThumbnailLoader, parent=None):
+    def __init__(
+        self,
+        loader: ThumbnailLoader,
+        problems: dict[str, dict[str, str]] | None = None,
+        labels: dict[str, str] | None = None,
+        parent=None,
+    ):
         super().__init__(parent)
         self.loader = loader
+        self.problems = problems or {}
+        self.folder_problems = folder_problems(self.problems)
+        self.labels = labels or {}
+        self.texts = ProblemTexts(self)
         self.entries: list[Entry] = []
         self._rows: dict[str, list[int]] = {}
         loader.ready.connect(self._thumbnail_ready)
@@ -76,14 +108,24 @@ class GridModel(QAbstractListModel):
         entry = self.entries[index.row()]
         if role == ROLE_ENTRY:
             return entry
+        if role == ROLE_PROBLEM:
+            return self._problem(entry)
         if role == Qt.ItemDataRole.ToolTipRole:
-            return entry.name
+            problem = self._problem(entry)
+            return f"{entry.name}\n\n{problem}" if problem else entry.name
         if role == Qt.ItemDataRole.DecorationRole and entry.record is not None:
             pixmap = self.loader.get(entry.record.hash)
             if pixmap is None and scanner.kind_of(entry.name) != scanner.VIDEO:
                 self.loader.request(entry.record.hash, entry.record.path)
             return pixmap
         return None
+
+    def _problem(self, entry: Entry) -> str | None:
+        if entry.folder is not None:
+            count = self.folder_problems.get(entry.folder.path, 0)
+            return self.texts.folder(count) if count else None
+        problems = self.problems.get(entry.record.path)
+        return self.texts.file(problems, self.labels) if problems else None
 
     def _thumbnail_ready(self, key: str) -> None:
         for row in self._rows.get(key, []):
@@ -125,6 +167,13 @@ class TileDelegate(QStyledItemDelegate):
             else:
                 self._paint_placeholder(painter, rect, entry)
 
+        if index.data(ROLE_PROBLEM):
+            badge = QRect(rect.right() - BADGE - 6, rect.y() + 6, BADGE, BADGE)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(theme.BG)
+            painter.drawEllipse(badge)
+            theme.icon("triangle-alert", theme.WARNING).paint(painter, badge.adjusted(5, 4, -5, -6))
+
         if selected:
             painter.setBrush(Qt.BrushStyle.NoBrush)
             painter.setPen(QPen(theme.ACCENT, 3))
@@ -165,7 +214,14 @@ class ViewerScreen(Screen):
 
     open_requested = Signal(list, int)
 
-    def __init__(self, root: Folder, disks: list[Disk], parent: QWidget | None = None):
+    def __init__(
+        self,
+        root: Folder,
+        disks: list[Disk],
+        problems: dict[str, dict[str, str]] | None = None,
+        labels: dict[str, str] | None = None,
+        parent: QWidget | None = None,
+    ):
         super().__init__(self.tr("Your photos"), parent=parent)
         self.root = root
         self.disks = disks
@@ -192,7 +248,12 @@ class ViewerScreen(Screen):
         self.tree.currentItemChanged.connect(self._folder_chosen)
         splitter.addWidget(self.tree)
 
-        self.model = GridModel(self.loader, self)
+        self.model = GridModel(self.loader, problems, labels, self)
+        counts = self.model.folder_problems
+        for path, item in self._items.items():
+            if counts.get(path):
+                item.setIcon(0, theme.icon("triangle-alert", theme.WARNING))
+                item.setToolTip(0, self.model.texts.folder(counts[path]))
         self.grid = QListView()
         self.grid.setViewMode(QListView.ViewMode.IconMode)
         self.grid.setResizeMode(QListView.ResizeMode.Adjust)

@@ -122,3 +122,28 @@ def test_double_click_photo_opens_preview(qtbot, ui):
     assert len(preview.records) == 10
     preview.back_button.click()
     assert window.current is viewer
+
+
+def test_badges(qtbot, dev):
+    from photosaver.ui.viewer import ROLE_PROBLEM
+
+    dev_disks.break_disks(dev, ["delete"], seed=1)  # a photo missing on disk 1
+    app_mod.create_application([])
+    window, controller = app_mod.build([dev / "disk-a", dev / "disk-b"])
+    qtbot.addWidget(window)
+    controller.start()
+    qtbot.waitUntil(lambda: controller.mode == HOME)
+    viewer = controller.show_viewer()
+    (path,) = [p for p in viewer.model.problems]
+    folder = path.rsplit("/", 1)[0]
+    top = path.split("/")[0]
+    tops = {e.name: viewer.model.index(r) for r, e in enumerate(entries(viewer))}
+    assert "1 photo here needs attention" in tops[top].data(ROLE_PROBLEM)
+    other = next(name for name in tops if name != top)
+    assert tops[other].data(ROLE_PROBLEM) is None
+    viewer.show_folder(folder)
+    rows = {e.record.path: viewer.model.index(r) for r, e in enumerate(entries(viewer)) if e.record}
+    assert rows[path].data(ROLE_PROBLEM).startswith("Missing on Disk 1")
+    assert sum(1 for i in rows.values() if i.data(ROLE_PROBLEM)) == 1
+    assert viewer._items[folder].toolTip(0)
+    controller.shutdown()

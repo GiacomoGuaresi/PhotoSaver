@@ -421,17 +421,17 @@ Check that both disks are connected, then try again.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="315" />
+        <location filename="../ui/controller.py" line="319" />
         <source>Some photos could not be restored: a photo with the same name is already there.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="341" />
+        <location filename="../ui/controller.py" line="345" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/controller.py" line="398" />
+        <location filename="../ui/controller.py" line="402" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation type="unfinished" />
     </message>
@@ -718,6 +718,44 @@ Check that both disks are connected, then try again.</source>
         <location filename="../ui/preview.py" line="262" />
         <source>This photo can't be opened: it may be damaged.</source>
         <translation type="unfinished" />
+    </message>
+</context>
+<context>
+    <name>ProblemTexts</name>
+    <message>
+        <location filename="../ui/viewer.py" line="61" />
+        <source>Disk %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="63" />
+        <source>Missing on %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="64" />
+        <source>Damaged on %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="65" />
+        <source>Changed on %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="66" />
+        <source>Something is wrong on %1</source>
+        <translation type="unfinished" />
+    </message>
+    <message>
+        <location filename="../ui/viewer.py" line="68" />
+        <source>Check the disks to sort it out.</source>
+        <translation type="unfinished" />
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/viewer.py" line="71" />
+        <source>%n photo(s) here need attention. Check the disks.</source>
+        <translation><numerusform>%n photo here needs attention. Check the disks.</numerusform><numerusform>%n photos here need attention. Check the disks.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -1060,7 +1098,7 @@ Check that both disks are connected, then try again.</source>
 <context>
     <name>TileDelegate</name>
     <message numerus="yes">
-        <location filename="../ui/viewer.py" line="148" />
+        <location filename="../ui/viewer.py" line="197" />
         <source>%n photo(s)</source>
         <translation><numerusform>%n photo</numerusform><numerusform>%n photos</numerusform></translation>
     </message>
@@ -1150,13 +1188,13 @@ Check that both disks are connected, then try again.</source>
 <context>
     <name>ViewerScreen</name>
     <message>
-        <location filename="../ui/viewer.py" line="169" />
-        <location filename="../ui/viewer.py" line="237" />
+        <location filename="../ui/viewer.py" line="225" />
+        <location filename="../ui/viewer.py" line="298" />
         <source>Your photos</source>
         <translation type="unfinished" />
     </message>
     <message>
-        <location filename="../ui/viewer.py" line="181" />
+        <location filename="../ui/viewer.py" line="237" />
         <source>All your photos</source>
         <translation type="unfinished" />
     </message>
