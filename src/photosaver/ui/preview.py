@@ -232,7 +232,14 @@ class PreviewScreen(Screen):
 
     def _show_video(self, record: FileRecord) -> None:
         if self.video is None:
-            self.video = VideoView()
+            try:
+                self.video = VideoView()
+            except ImportError:  # Qt Multimedia or a system library is missing
+                self.photo.set_picture(
+                    None, self.tr("This video can't be played on this computer.")
+                )
+                self.views.setCurrentWidget(self.photo)
+                return
             self.views.addWidget(self.video)
         self.views.setCurrentWidget(self.video)
         sources = [p for p in self._sources(record.path) if p.exists()]

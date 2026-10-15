@@ -80,3 +80,14 @@ def test_escape_goes_back(qtbot, preview):
     preview.back_requested.connect(lambda: back.append(1))
     qtbot.keyClick(preview, Qt.Key.Key_Escape)
     assert back == [1]
+
+
+def test_video_without_multimedia(qtbot, preview, monkeypatch):
+    import photosaver.ui.preview as preview_mod
+
+    def missing(*args, **kwargs):
+        raise ImportError("libpulse.so.0")
+
+    monkeypatch.setattr(preview_mod, "VideoView", missing)
+    preview.go(2)
+    assert preview.video is None and "can't be played" in preview.photo.text()
