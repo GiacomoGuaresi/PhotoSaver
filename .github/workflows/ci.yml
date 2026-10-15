@@ -35,7 +35,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y exfatprogs
+      - name: exFAT support
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y exfatprogs "linux-modules-extra-$(uname -r)"
+          sudo modprobe exfat
       - name: Mount two exFAT test disks
         run: |
           for n in 1 2; do
