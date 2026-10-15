@@ -114,13 +114,28 @@ class Banner(QFrame):
         self.label = theme.set_role(QLabel(), "heading")
         self.label.setWordWrap(True)
         layout.addWidget(self.label, 1)
+        self.action = QPushButton()
+        self.action.hide()
+        layout.addWidget(self.action, 0, Qt.AlignmentFlag.AlignVCenter)
+        self._slot: Callable[[], None] | None = None
+        self.action.clicked.connect(lambda: self._slot and self._slot())
         self.set(text, role)
 
-    def set(self, text: str, role: str = "safe") -> None:
+    def set(
+        self,
+        text: str,
+        role: str = "safe",
+        action: str | None = None,
+        slot: Callable[[], None] | None = None,
+    ) -> None:
+        """Change the message; ``action`` adds a button that runs ``slot``."""
         color = {"safe": theme.SAFE, "warning": theme.WARNING, "danger": theme.DANGER}[role]
         theme.set_role(self, role)
         self.picture.setPixmap(theme.icon_pixmap(self.ICONS[role], 36, color))
         self.label.setText(text)
+        self.action.setText(action or "")
+        self.action.setVisible(bool(action))
+        self._slot = slot
 
     @property
     def role(self) -> str:

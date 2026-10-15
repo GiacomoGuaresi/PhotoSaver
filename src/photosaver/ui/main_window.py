@@ -55,6 +55,7 @@ class DiskBar(QFrame):
         while self._disks.count():
             item = self._disks.takeAt(0)
             if item.widget():
+                item.widget().hide()
                 item.widget().deleteLater()
         for name, connected, detail in disks:
             chip = QWidget()

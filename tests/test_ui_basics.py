@@ -78,3 +78,12 @@ def test_italian_translation_loads(qtbot):
     finally:
         for t in translators:
             app.removeTranslator(t)
+
+
+def test_every_text_has_an_italian_translation():
+    import xml.etree.ElementTree as ET
+
+    ts = app_mod.I18N_DIR / "photosaver_it.ts"
+    for message in ET.parse(ts).getroot().iter("message"):
+        translation = message.find("translation")
+        assert translation.get("type") != "unfinished", message.find("source").text
