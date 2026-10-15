@@ -42,7 +42,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto
 
 | # | Step | Commit | Stato |
 |---|---|---|---|
-| 2.1 | **Piano di caricamento**: date (EXIF → nome file → data di modifica), destinazione proposta, doppioni, conflitti di nome | `feat(upload): upload plan` | ⬜ |
+| 2.1 | **Piano di caricamento**: date (EXIF → nome file → data di modifica), destinazione proposta, doppioni, conflitti di nome | `feat(upload): upload plan` | ✅ |
 | 2.2 | **Caricamento** su tutti i dischi, con ripresa dopo un'interruzione | `feat(upload): apply to all disks` | ⬜ |
 | 2.3 | **Check rapido**: confronto indice ↔ dischi per dimensione e data → differenze tipizzate | `feat(check): quick check` | ⬜ |
 | 2.4 | **Check completo** con hash, ripresa dopo un'interruzione, riconoscimento della corruzione (hash diverso + stessa data) | `feat(check): full check with bit rot detection` | ⬜ |

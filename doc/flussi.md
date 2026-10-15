@@ -85,6 +85,14 @@ seconda copia andrebbe fatto a mano.
    - stesso contenuto → viene saltato (è lo stesso file);
    - contenuto diverso → l'app chiede: rinomina il nuovo (`nome_2.jpg`) / salta.
      Un file in archivio non viene mai sovrascritto dal caricamento.
+   **Destinazione proposta**: la cartella dell'anno della maggior parte delle
+   foto (quella esistente, es. `FOTO 2026`, o una nuova chiamata come le altre,
+   o solo `2026`) + il nome della cartella caricata. Un intero albero di
+   archivio (tutte le foto dentro cartelle con un anno nel nome) va nella
+   radice dell'archivio, così com'è. I confronti dei nomi ignorano
+   maiuscole e minuscole, come exFAT.
+   **Doppioni** (stesso contenuto già in archivio o due volte nel caricamento):
+   saltati, a meno di chiedere di caricarli comunque.
 4. **Copia** su A e B in parallelo, con verifica. Barra di avanzamento,
    tempo stimato, pausa/annulla. Se si interrompe, riprende da dove era rimasta.
 5. **Riepilogo** → "Copia verificata su entrambi i dischi. Eliminare le
