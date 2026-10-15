@@ -83,3 +83,21 @@ def test_upload(dev, capsys):
     assert "Copied and verified on 2 disks: 33 files" in out
     assert "Deleted 33 originals" in out
     assert (dev / "disk-b" / "Foto" / "2026" / "MARE 2026" / "Spiaggia").is_dir()
+
+
+def test_check(dev, capsys):
+    a, b = str(dev / "disk-a"), str(dev / "disk-b")
+    cli.main(["init", a, "--label", "A"])
+    cli.main(["init", b, "--label", "B", "--join", a])
+    cli.main(["upload", str(dev / "desktop" / "LAGO 2026"), "--disks", a, b, "--apply"])
+    capsys.readouterr()
+
+    assert cli.main(["check", "--disks", a, b]) == 0
+    assert "16 files in the index, 0 differences" in capsys.readouterr().out
+
+    next((dev / "disk-b" / "Foto").rglob("*.jpg")).unlink()
+    assert cli.main(["check", "--disks", a, b]) == 1
+    assert "missing   B  " in capsys.readouterr().out
+
+    assert cli.main(["check", "--disks", a]) == 0
+    assert "Not connected: B" in capsys.readouterr().out

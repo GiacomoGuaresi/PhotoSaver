@@ -110,6 +110,15 @@ con l'hash e adottato, senza ricopiarlo.
 ## 4. Check
 
 - **Rapido**: automatico quando si collegano entrambi i dischi, dura secondi.
+  Confronta ogni disco con l'indice per dimensione e data (tolleranza 2 s,
+  per FAT/exFAT) e rilegge solo i file che sembrano diversi o nuovi:
+  - **mancante**: nell'indice ma non sul disco;
+  - **non registrato**: sul disco ma non nell'indice (aggiunto fuori dall'app);
+  - **corrotto**: contenuto diverso con la stessa data (nessuno l'ha toccato);
+  - **modificato**: contenuto e data diversi (modificato fuori dall'app);
+  - data cambiata ma contenuto uguale: nessun problema.
+
+  Una cartella illeggibile è un errore, non "file mancanti".
 - **Completo**: lanciato a mano (o su promemoria), rilegge e verifica tutti
   gli hash; avanzamento visibile, può riprendere.
 

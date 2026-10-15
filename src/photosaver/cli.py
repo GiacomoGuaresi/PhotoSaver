@@ -4,6 +4,7 @@ python -m photosaver.cli init  DISK --label A [--archive-dir Foto]
 python -m photosaver.cli init  DISK --label B --join OTHER_DISK
 python -m photosaver.cli scan  FOLDER
 python -m photosaver.cli status DISK
+python -m photosaver.cli check --disks A B
 python -m photosaver.cli upload --disks A B --dest "FOTO 2026/MARE" FOLDER [--apply]
 """
 
@@ -14,7 +15,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from .core import archive, scanner, upload
+from .core import archive, check, scanner, upload
 from .core.disk import DiskError, open_disk
 
 SHOWN = 10  # list items shown before "… and N more"
@@ -43,8 +44,17 @@ def main(argv: list[str] | None = None) -> int:
     up.add_argument("--apply", action="store_true", help="copy (default: only show the plan)")
     up.add_argument("--delete-sources", action="store_true", help="after a complete upload")
 
+    chk = commands.add_parser("check", help="compare the disks with the index")
+    chk.add_argument("--disks", type=Path, nargs="+", required=True)
+
     args = parser.parse_args(argv)
-    commands_ = {"init": _init, "scan": _scan, "status": _status, "upload": _upload}
+    commands_ = {
+        "init": _init,
+        "scan": _scan,
+        "status": _status,
+        "upload": _upload,
+        "check": _check,
+    }
     try:
         return commands_[args.command](args)
     except (DiskError, OSError, ValueError) as error:
@@ -123,6 +133,20 @@ def _upload(args) -> int:
             cleanup = upload.delete_sources(plan, arch)
             print(f"Deleted {len(cleanup.deleted)} originals, kept {len(cleanup.kept)}")
         return 1 if result.failed else 0
+
+
+def _check(args) -> int:
+    with archive.Archive.open([open_disk(path) for path in args.disks]) as arch:
+        if arch.missing:
+            print(f"Not connected: {', '.join(arch.missing)}")
+        report = check.quick_check(arch)
+        labels = {disk.id: disk.label for disk in arch.disks}
+        print(f"{report.files} files in the index, {len(report.differences)} differences")
+        for diff in sorted(report.differences, key=lambda d: (d.kind, d.path, labels[d.disk_id])):
+            print(f"  {diff.kind:9} {labels[diff.disk_id]}  {diff.path}")
+        for disk_id, path, reason in report.errors:
+            print(f"  error     {labels[disk_id]}  {path}: {reason}")
+        return 0 if report.clean else 1
 
 
 def _print_list(title: str, items: list[str]) -> None:
