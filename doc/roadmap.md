@@ -64,7 +64,7 @@ menu "Altro".
 | 3.2 | **Collega i dischi**: riconoscimento dei dischi (in sviluppo: percorsi configurati), schermata d'attesa, sola lettura con un disco, controllo veloce all'avvio, "Ho finito" | `feat(ui): connect disks` | ✅ |
 | 3.3 | **Prepara i dischi**: procedura guidata per creare l'archivio (sui dischi simulati, senza formattazione) | `feat(ui): prepare disks wizard` | ✅ |
 | 3.4 | **Aggiungi foto**: scelta cartelle, anteprima, copia con avanzamento, proposta di eliminare gli originali | `feat(ui): add photos flow` | ✅ |
-| 3.5 | **Controlla i dischi**: controllo veloce e approfondito, problemi raggruppati con l'azione proposta, operazioni interrotte | `feat(ui): check flow` | ⬜ |
+| 3.5 | **Controlla i dischi**: controllo veloce e approfondito, problemi raggruppati con l'azione proposta, operazioni interrotte | `feat(ui): check flow` | ✅ |
 | 3.6 | **Storico** e **Cestino** | `feat(ui): history and trash` | ⬜ |
 
 ## M4 — Visualizzatore → `v0.4.0`

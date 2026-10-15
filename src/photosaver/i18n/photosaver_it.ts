@@ -65,6 +65,127 @@ Controlla che entrambi i dischi siano collegati. Le foto copiate finora sono al 
     </message>
 </context>
 <context>
+    <name>CheckFlow</name>
+    <message>
+        <location filename="../ui/check_flow.py" line="225" />
+        <source>I'm reading every photo…</source>
+        <translation>Sto rileggendo ogni foto…</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="227" />
+        <source>You can wait calmly, or stop and go on another time: I'll start again from here.</source>
+        <translation>Puoi aspettare tranquillamente, oppure interrompere e continuare un'altra volta: riprenderò da qui.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="232" />
+        <source>I'm checking the disks…</source>
+        <translation>Sto controllando i dischi…</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="240" />
+        <source>Stop</source>
+        <translation>Interrompi</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="255" />
+        <source>%1 left</source>
+        <translation>mancano %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="268" />
+        <source>Not now</source>
+        <translation>Non ora</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="278" />
+        <source>I'm sorting things out…</source>
+        <translation>Sto sistemando…</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="293" />
+        <source>Almost done</source>
+        <translation>Quasi fatto</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/check_flow.py" line="295" />
+        <source>%n thing(s) could not be sorted out. Check that both disks are connected and try again.</source>
+        <translation><numerusform>%n cosa non si è potuta sistemare. Controlla che entrambi i dischi siano collegati e riprova.</numerusform><numerusform>%n cose non si sono potute sistemare. Controlla che entrambi i dischi siano collegati e riprova.</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="303" />
+        <source>Check again</source>
+        <translation>Controlla di nuovo</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="309" />
+        <source>Check stopped</source>
+        <translation>Controllo interrotto</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="310" />
+        <source>Next time the thorough check starts again from where it stopped.</source>
+        <translation>La prossima volta il controllo approfondito riparte da dove si è fermato.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="314" />
+        <location filename="../ui/check_flow.py" line="325" />
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="318" />
+        <source>Something went wrong</source>
+        <translation>Qualcosa non è andato</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="319" />
+        <source>%1
+
+Check that both disks are connected, then try again.</source>
+        <translation>%1
+
+Controlla che entrambi i dischi siano collegati, poi riprova.</translation>
+    </message>
+</context>
+<context>
+    <name>ChooseCheckScreen</name>
+    <message>
+        <location filename="../ui/check_flow.py" line="41" />
+        <source>Check the disks</source>
+        <translation>Controlla i dischi</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="42" />
+        <source>Which check do you want to do?</source>
+        <translation>Che controllo vuoi fare?</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="47" />
+        <source>Quick check</source>
+        <translation>Controllo veloce</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="48" />
+        <source>A few seconds. Finds photos that are missing, added or moved.</source>
+        <translation>Pochi secondi. Trova le foto mancanti, aggiunte o spostate.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="51" />
+        <source>Thorough check</source>
+        <translation>Controllo approfondito</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="53" />
+        <source>%1. Reads every photo again to find the ones that got damaged. You can stop it and go on another time.</source>
+        <translation>%1. Rilegge ogni foto per trovare quelle che si sono rovinate. Puoi interromperlo e continuare un'altra volta.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="59" />
+        <source>Start the check</source>
+        <translation>Inizia il controllo</translation>
+    </message>
+</context>
+<context>
     <name>ChooseDiskScreen</name>
     <message>
         <location filename="../ui/prepare.py" line="61" />
@@ -224,82 +345,82 @@ Controlla che entrambi i dischi siano collegati. Le foto copiate finora sono al 
 <context>
     <name>Controller</name>
     <message>
-        <location filename="../ui/controller.py" line="84" />
+        <location filename="../ui/controller.py" line="85" />
         <source>Disk %1</source>
         <translation>Disco %1</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="87" />
+        <location filename="../ui/controller.py" line="88" />
         <source>not connected</source>
         <translation>non collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="90" />
+        <location filename="../ui/controller.py" line="91" />
         <source>connected</source>
         <translation>collegato</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="93" />
+        <location filename="../ui/controller.py" line="94" />
         <source>connected · %1 free</source>
         <translation>collegato · %1 liberi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="102" />
+        <location filename="../ui/controller.py" line="103" />
         <source>Perfect, both disks are here</source>
         <translation>Perfetto, ho trovato entrambi i dischi</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="103" />
+        <location filename="../ui/controller.py" line="104" />
         <source>I'm checking that all the photos are fine… it takes a few seconds.</source>
         <translation>Sto controllando che le foto siano tutte a posto… ci vuole qualche secondo.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="120" />
+        <location filename="../ui/controller.py" line="121" />
         <source>Last time something was interrupted. Your photos are safe: I'll fix it.</source>
         <translation>L'ultima volta qualcosa si è interrotto. Le tue foto sono al sicuro: sistemo io.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="122" />
+        <location filename="../ui/controller.py" line="123" />
         <source>Fix</source>
         <translation>Sistema</translation>
     </message>
     <message numerus="yes">
-        <location filename="../ui/controller.py" line="127" />
+        <location filename="../ui/controller.py" line="128" />
         <source>I found %n thing(s) to sort out on the disks.</source>
         <translation><numerusform>Ho trovato %n cosa da sistemare sui dischi.</numerusform><numerusform>Ho trovato %n cose da sistemare sui dischi.</numerusform></translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="129" />
+        <location filename="../ui/controller.py" line="130" />
         <source>Let's look together</source>
         <translation>Vediamo insieme</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="134" />
+        <location filename="../ui/controller.py" line="135" />
         <source>Some files can't be read. Run a check of the disks.</source>
         <translation>Alcuni file non si riescono a leggere. Fai un controllo dei dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="136" />
+        <location filename="../ui/controller.py" line="137" />
         <source>Check</source>
         <translation>Controlla</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="140" />
+        <location filename="../ui/controller.py" line="141" />
         <source>Your photos are safe on both disks.</source>
         <translation>Le tue foto sono al sicuro su entrambi i dischi.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="146" />
+        <location filename="../ui/controller.py" line="147" />
         <source>I'm finishing what was interrupted…</source>
         <translation>Sto completando quello che si era interrotto…</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="192" />
+        <location filename="../ui/controller.py" line="203" />
         <source>You are looking at Disk %1 only. To add photos, connect Disk %2 too.</source>
         <translation>Stai guardando solo il Disco %1. Per aggiungere foto collega anche il Disco %2.</translation>
     </message>
     <message>
-        <location filename="../ui/controller.py" line="234" />
+        <location filename="../ui/controller.py" line="245" />
         <source>Something went wrong, your photos were not touched: %1</source>
         <translation>Qualcosa non è andato, le tue foto non sono state toccate: %1</translation>
     </message>
@@ -409,6 +530,30 @@ Controlla che entrambi i dischi siano collegati. Le foto copiate finora sono al 
         <location filename="../ui/add_photos.py" line="248" />
         <source>%n file(s) can't be read.</source>
         <translation><numerusform>%n file non si riesce a leggere.</numerusform><numerusform>%n file non si riescono a leggere.</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>GroupRow</name>
+    <message>
+        <location filename="../ui/check_flow.py" line="87" />
+        <source>Choose what to do…</source>
+        <translation>Scegli cosa fare…</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="99" />
+        <location filename="../ui/check_flow.py" line="113" />
+        <source>Show the photos</source>
+        <translation>Mostra le foto</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/check_flow.py" line="107" />
+        <source>… and %n more</source>
+        <translation><numerusform>… e un'altra</numerusform><numerusform>… e altre %n</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="113" />
+        <source>Hide the photos</source>
+        <translation>Nascondi le foto</translation>
     </message>
 </context>
 <context>
@@ -522,6 +667,54 @@ Controlla che entrambi i dischi siano collegati. Le foto copiate finora sono al 
     </message>
 </context>
 <context>
+    <name>ResultsScreen</name>
+    <message>
+        <location filename="../ui/check_flow.py" line="133" />
+        <source>All good!</source>
+        <translation>Tutto a posto!</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="134" />
+        <source>Your photos are safe on both disks.</source>
+        <translation>Le tue foto sono al sicuro su entrambi i dischi.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="137" />
+        <source>I found something to sort out</source>
+        <translation>Ho trovato qualcosa da sistemare</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="139" />
+        <source>For each line I've already chosen what to do when it's obvious. Check, then press the button.</source>
+        <translation>Per ogni riga ho già scelto cosa fare quando è ovvio. Controlla, poi premi il pulsante.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/check_flow.py" line="160" />
+        <source>%n file(s) or folder(s) can't be read. If it happens again, the disk may be failing: copy your photos to a new disk soon.</source>
+        <translation><numerusform>%n file o cartella non si riesce a leggere. Se succede di nuovo, il disco potrebbe rovinarsi: presto copia le foto su un disco nuovo.</numerusform><numerusform>%n file o cartelle non si riescono a leggere. Se succede di nuovo, il disco potrebbe rovinarsi: presto copia le foto su un disco nuovo.</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/check_flow.py" line="170" />
+        <source>%n known problem(s) not shown.</source>
+        <translation><numerusform>%n problema noto non è mostrato.</numerusform><numerusform>%n problemi noti non sono mostrati.</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="174" />
+        <source>The lines without a choice stay as they are.</source>
+        <translation>Le righe senza una scelta restano come sono.</translation>
+    </message>
+    <message>
+        <location filename="../ui/check_flow.py" line="184" />
+        <source>Back to the start</source>
+        <translation>Torna all'inizio</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/check_flow.py" line="188" />
+        <source>Sort out %n thing(s)</source>
+        <translation><numerusform>Sistema %n cosa</numerusform><numerusform>Sistema %n cose</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>Screen</name>
     <message>
         <location filename="../ui/screen.py" line="55" />
@@ -570,6 +763,154 @@ Controlla che entrambi i dischi siano collegati. Le foto copiate finora sono al 
         <location filename="../ui/add_photos.py" line="339" />
         <source>Done</source>
         <translation>Fatto</translation>
+    </message>
+</context>
+<context>
+    <name>Texts</name>
+    <message>
+        <location filename="../ui/issues.py" line="65" />
+        <source>Disk %1</source>
+        <translation>Disco %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="66" />
+        <source> and </source>
+        <translation> e </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="76" />
+        <source>%n photo(s) got damaged on both disks</source>
+        <translation><numerusform>%n foto si è rovinata su entrambi i dischi</numerusform><numerusform>%n foto si sono rovinate su entrambi i dischi</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="77" />
+        <source>%n photo(s) got damaged on %1</source>
+        <translation><numerusform>%n foto si è rovinata sul %1</numerusform><numerusform>%n foto si sono rovinate sul %1</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="79" />
+        <source>%n photo(s) are missing on %1</source>
+        <translation><numerusform>%n foto manca sul %1</numerusform><numerusform>%n foto mancano sul %1</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="81" />
+        <source>%n photo(s) are missing on both disks</source>
+        <translation><numerusform>%n foto manca su entrambi i dischi</numerusform><numerusform>%n foto mancano su entrambi i dischi</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="84" />
+        <source>%n photo(s) were changed on both disks</source>
+        <translation><numerusform>%n foto è stata modificata su entrambi i dischi</numerusform><numerusform>%n foto sono state modificate su entrambi i dischi</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="85" />
+        <source>%n photo(s) were changed on %1</source>
+        <translation><numerusform>%n foto è stata modificata sul %1</numerusform><numerusform>%n foto sono state modificate sul %1</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="90" />
+        <source>The folder “%1” was renamed “%2” on %3 (%n photo(s))</source>
+        <translation><numerusform>La cartella “%1” è stata rinominata “%2” sul %3 (%n foto)</numerusform><numerusform>La cartella “%1” è stata rinominata “%2” sul %3 (%n foto)</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="95" />
+        <source>the main folder</source>
+        <translation>la cartella principale</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="97" />
+        <source>%n photo(s) were moved from “%1” to “%2” on %3</source>
+        <translation><numerusform>%n foto è stata spostata da “%1” a “%2” sul %3</numerusform><numerusform>%n foto sono state spostate da “%1” a “%2” sul %3</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="103" />
+        <source>%n photo(s) were moved on %1</source>
+        <translation><numerusform>%n foto è stata spostata sul %1</numerusform><numerusform>%n foto sono state spostate sul %1</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="106" />
+        <source>%n photo(s) were added without the app</source>
+        <translation><numerusform>%n foto è stata aggiunta senza l'app</numerusform><numerusform>%n foto sono state aggiunte senza l'app</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="107" />
+        <source>%n photo(s) were added without the app, only on %1</source>
+        <translation><numerusform>%n foto è stata aggiunta senza l'app, solo sul %1</numerusform><numerusform>%n foto sono state aggiunte senza l'app, solo sul %1</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../ui/issues.py" line="110" />
+        <source>%n photo(s) have different problems on the two disks</source>
+        <translation><numerusform>%n foto ha problemi diversi sui due dischi</numerusform><numerusform>%n foto hanno problemi diversi sui due dischi</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="119" />
+        <source>Put back the original</source>
+        <translation>Rimetti l'originale</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="120" />
+        <source>Repair with the good copy from %1</source>
+        <translation>Ripara con la copia buona del %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="122" />
+        <source>Copy them again from %1</source>
+        <translation>Copia di nuovo dal %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="124" />
+        <source>Delete them from %1 too (they go to the trash)</source>
+        <translation>Cancella anche dal %1 (va nel cestino)</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="126" />
+        <source>Remove them from the list of your photos</source>
+        <translation>Togli dall'elenco delle tue foto</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="129" />
+        <source>Keep the version of %1</source>
+        <translation>Tieni la versione del %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="132" />
+        <source>That's fine, keep them there</source>
+        <translation>Va bene così, lascia lì</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="133" />
+        <source>Keep the change</source>
+        <translation>Tieni la modifica</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="135" />
+        <source>Do the same on %1</source>
+        <translation>Fai lo stesso sul %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="137" />
+        <source>Put them back where they were</source>
+        <translation>Rimetti com'era</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="140" />
+        <source>Add them to your photos (copy them to %1 too)</source>
+        <translation>Aggiungi alle tue foto (e copia anche sul %1)</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="143" />
+        <source>Add them to your photos</source>
+        <translation>Aggiungi alle tue foto</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="145" />
+        <source>Delete them (they go to the trash)</source>
+        <translation>Cancella (va nel cestino)</translation>
+    </message>
+    <message>
+        <location filename="../ui/issues.py" line="146" />
+        <source>Leave it as it is, don't tell me again</source>
+        <translation>Lascia così, non dirmelo più</translation>
     </message>
 </context>
 <context>

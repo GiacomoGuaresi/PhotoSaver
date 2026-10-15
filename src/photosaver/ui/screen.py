@@ -88,6 +88,7 @@ class Screen(QWidget):
         button.clicked.connect(slot)
         index = self._footer.indexOf(self.primary) if self.primary else self._footer.count()
         self._footer.insertWidget(index, button)
+        button.show()  # added to a screen that may already be on display
         self._update_footer()
         return button
 

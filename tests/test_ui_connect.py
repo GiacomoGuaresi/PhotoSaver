@@ -4,6 +4,7 @@ from conftest import put
 from photosaver.core import archive as archive_mod
 from photosaver.core import check, resolve
 from photosaver.ui import app as app_mod
+from photosaver.ui.check_flow import ResultsScreen
 from photosaver.ui.connect import BusyScreen, ConnectScreen, DoneScreen
 from photosaver.ui.controller import CONNECT, HOME, READ_ONLY
 from photosaver.ui.home import HomeScreen
@@ -83,10 +84,9 @@ def test_problems_found(qtbot, ui, roots, arch):
     home = start_and_wait_home(qtbot, ui)
     assert home.status.role == "warning"
     assert not home.status.action.isHidden()
-    requested = []
-    ui[1].check_requested.connect(lambda: requested.append(1))
-    home.status.action.click()
-    assert requested == [1]
+    home.status.action.click()  # "Let's look together": straight to the results
+    window = ui[0]
+    qtbot.waitUntil(lambda: isinstance(window.current, ResultsScreen))
 
 
 def test_interrupted_action_is_fixed(qtbot, ui, roots, arch):

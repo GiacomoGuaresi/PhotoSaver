@@ -12,6 +12,7 @@ from PySide6.QtCore import QLocale, QObject, Signal
 
 from ..core import detect, status
 from .add_photos import AddPhotosFlow
+from .check_flow import CheckFlow
 from .connect import BusyScreen, ConnectScreen, DoneScreen
 from .home import HomeScreen
 from .main_window import MainWindow
@@ -27,11 +28,11 @@ READ_ONLY = "read_only"
 DONE = "done"
 PREPARE = "prepare"
 ADD = "add"
+CHECK = "check"
 
 
 class Controller(QObject):
     browse_requested = Signal()
-    check_requested = Signal()  # the "Check the disks" flow
 
     def __init__(self, window: MainWindow, session: Session, parent: QObject | None = None):
         super().__init__(parent)
@@ -127,14 +128,14 @@ class Controller(QObject):
                 self.tr("I found %n thing(s) to sort out on the disks.", "", len(result.issues)),
                 "warning",
                 self.tr("Let's look together"),
-                self.check_requested.emit,
+                lambda: self.check_disks(quick_now=True),
             )
         elif result.errors:
             home.status.set(
                 self.tr("Some files can't be read. Run a check of the disks."),
                 "warning",
                 self.tr("Check"),
-                self.check_requested.emit,
+                lambda: self.check_disks(quick_now=True),
             )
         else:
             home.status.set(self.tr("Your photos are safe on both disks."), "safe")
@@ -176,6 +177,16 @@ class Controller(QObject):
         self.mode = ""
         self.on_changed()
 
+    # Checking the disks
+
+    def check_disks(self, quick_now: bool = False) -> None:
+        self.busy = True
+        self.mode = CHECK
+        size = self.startup.size if self.startup else 0
+        flow = CheckFlow(self.window, list(self.disks), self.run, size, self)
+        flow.finished.connect(self._flow_finished)
+        flow.start(quick_now=quick_now)
+
     # Read-only
 
     def open_read_only(self) -> None:
@@ -201,7 +212,7 @@ class Controller(QObject):
             screen = self.window.reset(HomeScreen())
             screen.add_requested.connect(self.add_photos)
             screen.browse_requested.connect(self.browse_requested)
-            screen.check_requested.connect(self.check_requested)
+            screen.check_requested.connect(self.check_disks)
         return screen
 
     # Finishing

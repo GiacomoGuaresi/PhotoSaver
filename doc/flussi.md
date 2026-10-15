@@ -268,6 +268,14 @@ riproposta.
 
 I file sostituiti o cancellati finiscono nel cestino del loro disco.
 
+**Come è fatta** (3.5): "Controlla i dischi" fa scegliere tra *controllo
+veloce* (pochi secondi) e *approfondito* (con il tempo stimato). I risultati
+sono righe con una frase semplice ("1 foto si è rovinata sul Disco 2") e un
+menu con le azioni dette a parole ("Ripara con la copia buona del Disco 1"),
+già scelte quando è ovvio; le righe da decidere vengono prima. "Sistema N cose"
+applica le scelte, poi rifà il controllo veloce per mostrare che è tutto a
+posto. Dal riquadro della home, "Vediamo insieme" porta dritto ai risultati.
+
 _Nota per l'interfaccia_: il motore produce un problema per file. Una cartella
 rinominata su un disco diventa quindi un problema per ogni foto: la schermata
 del check li deve **raggruppare per cartella** ("La cartella NEVE 2024 è stata

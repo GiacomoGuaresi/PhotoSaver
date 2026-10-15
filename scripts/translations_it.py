@@ -208,4 +208,126 @@ ITALIAN: dict[str, str | tuple[str, str]] = {
     "less than a minute": "meno di un minuto",
     "about %n minute(s)": ("circa %n minuto", "circa %n minuti"),
     "about %n hour(s)": ("circa %n ora", "circa %n ore"),
+    # Checking the disks
+    "Which check do you want to do?": "Che controllo vuoi fare?",
+    "Quick check": "Controllo veloce",
+    "A few seconds. Finds photos that are missing, added or moved.": (
+        "Pochi secondi. Trova le foto mancanti, aggiunte o spostate."
+    ),
+    "Thorough check": "Controllo approfondito",
+    "%1. Reads every photo again to find the ones that got damaged. You can stop it and go "
+    "on another time.": (
+        "%1. Rilegge ogni foto per trovare quelle che si sono rovinate. Puoi interromperlo "
+        "e continuare un'altra volta."
+    ),
+    "Start the check": "Inizia il controllo",
+    "I'm reading every photo…": "Sto rileggendo ogni foto…",
+    "You can wait calmly, or stop and go on another time: I'll start again from here.": (
+        "Puoi aspettare tranquillamente, oppure interrompere e continuare un'altra volta: "
+        "riprenderò da qui."
+    ),
+    "I'm checking the disks…": "Sto controllando i dischi…",
+    "Not now": "Non ora",
+    "I'm sorting things out…": "Sto sistemando…",
+    "%n thing(s) could not be sorted out. Check that both disks are connected and try again.": (
+        "%n cosa non si è potuta sistemare. Controlla che entrambi i dischi siano collegati "
+        "e riprova.",
+        "%n cose non si sono potute sistemare. Controlla che entrambi i dischi siano collegati "
+        "e riprova.",
+    ),
+    "Check again": "Controlla di nuovo",
+    "Check stopped": "Controllo interrotto",
+    "Next time the thorough check starts again from where it stopped.": (
+        "La prossima volta il controllo approfondito riparte da dove si è fermato."
+    ),
+    "%1\n\nCheck that both disks are connected, then try again.": (
+        "%1\n\nControlla che entrambi i dischi siano collegati, poi riprova."
+    ),
+    "Choose what to do…": "Scegli cosa fare…",
+    "Show the photos": "Mostra le foto",
+    "Hide the photos": "Nascondi le foto",
+    "… and %n more": ("… e un'altra", "… e altre %n"),
+    "All good!": "Tutto a posto!",
+    "I found something to sort out": "Ho trovato qualcosa da sistemare",
+    "For each line I've already chosen what to do when it's obvious. Check, then press the "
+    "button.": (
+        "Per ogni riga ho già scelto cosa fare quando è ovvio. Controlla, poi premi il pulsante."
+    ),
+    "%n file(s) or folder(s) can't be read. If it happens again, the disk may be failing: "
+    "copy your photos to a new disk soon.": (
+        "%n file o cartella non si riesce a leggere. Se succede di nuovo, il disco potrebbe "
+        "rovinarsi: presto copia le foto su un disco nuovo.",
+        "%n file o cartelle non si riescono a leggere. Se succede di nuovo, il disco potrebbe "
+        "rovinarsi: presto copia le foto su un disco nuovo.",
+    ),
+    "%n known problem(s) not shown.": (
+        "%n problema noto non è mostrato.",
+        "%n problemi noti non sono mostrati.",
+    ),
+    "The lines without a choice stay as they are.": "Le righe senza una scelta restano come sono.",
+    "Back to the start": "Torna all'inizio",
+    "Sort out %n thing(s)": ("Sistema %n cosa", "Sistema %n cose"),
+    " and ": " e ",
+    "%n photo(s) got damaged on both disks": (
+        "%n foto si è rovinata su entrambi i dischi",
+        "%n foto si sono rovinate su entrambi i dischi",
+    ),
+    "%n photo(s) got damaged on %1": (
+        "%n foto si è rovinata sul %1",
+        "%n foto si sono rovinate sul %1",
+    ),
+    "%n photo(s) are missing on %1": ("%n foto manca sul %1", "%n foto mancano sul %1"),
+    "%n photo(s) are missing on both disks": (
+        "%n foto manca su entrambi i dischi",
+        "%n foto mancano su entrambi i dischi",
+    ),
+    "%n photo(s) were changed on both disks": (
+        "%n foto è stata modificata su entrambi i dischi",
+        "%n foto sono state modificate su entrambi i dischi",
+    ),
+    "%n photo(s) were changed on %1": (
+        "%n foto è stata modificata sul %1",
+        "%n foto sono state modificate sul %1",
+    ),
+    "The folder “%1” was renamed “%2” on %3 (%n photo(s))": (
+        "La cartella “%1” è stata rinominata “%2” sul %3 (%n foto)",
+        "La cartella “%1” è stata rinominata “%2” sul %3 (%n foto)",
+    ),
+    "the main folder": "la cartella principale",
+    "%n photo(s) were moved from “%1” to “%2” on %3": (
+        "%n foto è stata spostata da “%1” a “%2” sul %3",
+        "%n foto sono state spostate da “%1” a “%2” sul %3",
+    ),
+    "%n photo(s) were moved on %1": (
+        "%n foto è stata spostata sul %1",
+        "%n foto sono state spostate sul %1",
+    ),
+    "%n photo(s) were added without the app": (
+        "%n foto è stata aggiunta senza l'app",
+        "%n foto sono state aggiunte senza l'app",
+    ),
+    "%n photo(s) were added without the app, only on %1": (
+        "%n foto è stata aggiunta senza l'app, solo sul %1",
+        "%n foto sono state aggiunte senza l'app, solo sul %1",
+    ),
+    "%n photo(s) have different problems on the two disks": (
+        "%n foto ha problemi diversi sui due dischi",
+        "%n foto hanno problemi diversi sui due dischi",
+    ),
+    "Put back the original": "Rimetti l'originale",
+    "Repair with the good copy from %1": "Ripara con la copia buona del %1",
+    "Copy them again from %1": "Copia di nuovo dal %1",
+    "Delete them from %1 too (they go to the trash)": "Cancella anche dal %1 (va nel cestino)",
+    "Remove them from the list of your photos": "Togli dall'elenco delle tue foto",
+    "Keep the version of %1": "Tieni la versione del %1",
+    "That's fine, keep them there": "Va bene così, lascia lì",
+    "Keep the change": "Tieni la modifica",
+    "Do the same on %1": "Fai lo stesso sul %1",
+    "Put them back where they were": "Rimetti com'era",
+    "Add them to your photos (copy them to %1 too)": (
+        "Aggiungi alle tue foto (e copia anche sul %1)"
+    ),
+    "Add them to your photos": "Aggiungi alle tue foto",
+    "Delete them (they go to the trash)": "Cancella (va nel cestino)",
+    "Leave it as it is, don't tell me again": "Lascia così, non dirmelo più",
 }
