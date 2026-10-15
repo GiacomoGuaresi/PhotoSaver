@@ -37,6 +37,23 @@ Conseguenze sul codice:
   cartella (o con un'opzione di sviluppo), così si provano i casi "un disco solo"
   e "disco mancante".
 
+Si creano con:
+
+```sh
+uv run python scripts/dev_disks.py create   # ricrea dev-disks/ da zero (--seed, --scale)
+uv run python scripts/dev_disks.py reset    # lo cancella
+```
+
+`desktop/` contiene due eventi nuovi (`MARE 2026`, `LAGO 2026`) e un archivio
+vecchio da ricaricare (`vecchio-archivio/FOTO FAMIGLIA/FOTO 2024…2025`), con
+foto Samsung, Pixel, WhatsApp (senza EXIF) e reflex, qualche video e file da
+ignorare. Le foto sono JPEG veri con data, fotocamera e GPS controllati; i video
+sono segnaposto non riproducibili. Il generatore è in
+`src/photosaver/devtools/` ed è usato anche dai test.
+
+`reset` cancella solo una cartella che contiene il file `.dev-disks`, creato dal
+generatore: non può cancellare un disco vero per errore.
+
 ### Scenari da poter riprodurre
 
 Piccoli script di sviluppo (es. `scripts/dev_disks.py`) per creare e "rompere"
