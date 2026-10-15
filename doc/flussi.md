@@ -121,6 +121,11 @@ con l'hash e adottato, senza ricopiarlo.
   Una cartella illeggibile è un errore, non "file mancanti".
 - **Completo**: lanciato a mano (o su promemoria), rilegge e verifica tutti
   gli hash; avanzamento visibile, può riprendere.
+  I dischi si leggono **in parallelo** (un thread per disco). Lo stato di ogni
+  copia (`ok`, `missing`, `corrupt`, `modified`) e l'ora della verifica si
+  salvano nell'indice man mano: se il check si interrompe, il successivo
+  riparte saltando i file già verificati, e ripropone i problemi già trovati.
+  Si può fare anche con un solo disco collegato (verifica solo quel disco).
 
 Risultato: un **elenco di differenze raggruppate per tipo**, ognuna con
 l'azione proposta già selezionata quando è ovvia:

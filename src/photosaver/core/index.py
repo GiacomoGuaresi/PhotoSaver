@@ -28,6 +28,7 @@ HASH_ALGORITHM = hashing.ALGORITHM
 OK = "ok"
 MISSING = "missing"
 CORRUPT = "corrupt"
+MODIFIED = "modified"
 
 # One script per schema version: MIGRATIONS[n] upgrades from version n to n + 1.
 MIGRATIONS: list[str] = [
@@ -132,9 +133,9 @@ class Index:
             raise FileExistsError(f"{path} already exists")
         index = cls._connect(path)
         with index.transaction():
-            index._set_meta("archive_id", archive_id)
-            index._set_meta("hash_algorithm", HASH_ALGORITHM)
-            index._set_meta("created", now())
+            index.set_meta("archive_id", archive_id)
+            index.set_meta("hash_algorithm", HASH_ALGORITHM)
+            index.set_meta("created", now())
         return index
 
     @classmethod
@@ -178,7 +179,7 @@ class Index:
         self._in_transaction = True
         try:
             yield
-            self._set_meta("revision", str(self.revision + 1))
+            self.set_meta("revision", str(self.revision + 1))
             self._db.execute("COMMIT")
         except BaseException:
             self._db.execute("ROLLBACK")
@@ -193,22 +194,25 @@ class Index:
 
     @property
     def revision(self) -> int:
-        return int(self._get_meta("revision") or 0)
+        return int(self.get_meta("revision") or 0)
 
     @property
     def archive_id(self) -> str:
-        return self._get_meta("archive_id") or ""
+        return self.get_meta("archive_id") or ""
 
     @property
     def schema_version(self) -> int:
         return self._db.execute("PRAGMA user_version").fetchone()[0]
 
-    def _get_meta(self, key: str) -> str | None:
+    def get_meta(self, key: str) -> str | None:
         row = self._db.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()
         return row[0] if row else None
 
-    def _set_meta(self, key: str, value: str) -> None:
+    def set_meta(self, key: str, value: str) -> None:
         self._write("INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)", (key, value))
+
+    def delete_meta(self, key: str) -> None:
+        self._write("DELETE FROM meta WHERE key = ?", (key,))
 
     # Disks
 
@@ -293,6 +297,17 @@ class Index:
             (path,),
         )
         return {disk_id: Copy(state, verified_at) for disk_id, state, verified_at in rows}
+
+    def copies_on(self, disk_id: str) -> dict[str, Copy]:
+        """State of every file on a disk, by path."""
+        rows = self._db.execute(
+            """
+            SELECT files.path, state, verified_at FROM copies
+            JOIN files ON files.id = copies.file_id WHERE copies.disk_id = ?
+            """,
+            (disk_id,),
+        )
+        return {path: Copy(state, verified_at) for path, state, verified_at in rows}
 
     # History
 

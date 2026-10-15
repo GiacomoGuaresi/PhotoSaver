@@ -34,3 +34,4 @@ def put(arch, path, data: bytes, *, disks=None, index=True):
             )
             for disk in arch.disks:
                 arch.index.set_copy(path, disk.id, OK)
+        arch.sync_indexes()

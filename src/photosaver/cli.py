@@ -4,7 +4,7 @@ python -m photosaver.cli init  DISK --label A [--archive-dir Foto]
 python -m photosaver.cli init  DISK --label B --join OTHER_DISK
 python -m photosaver.cli scan  FOLDER
 python -m photosaver.cli status DISK
-python -m photosaver.cli check --disks A B
+python -m photosaver.cli check --disks A B [--full]
 python -m photosaver.cli upload --disks A B --dest "FOTO 2026/MARE" FOLDER [--apply]
 """
 
@@ -46,6 +46,7 @@ def main(argv: list[str] | None = None) -> int:
 
     chk = commands.add_parser("check", help="compare the disks with the index")
     chk.add_argument("--disks", type=Path, nargs="+", required=True)
+    chk.add_argument("--full", action="store_true", help="read every file (bit rot)")
 
     args = parser.parse_args(argv)
     commands_ = {
@@ -139,7 +140,7 @@ def _check(args) -> int:
     with archive.Archive.open([open_disk(path) for path in args.disks]) as arch:
         if arch.missing:
             print(f"Not connected: {', '.join(arch.missing)}")
-        report = check.quick_check(arch)
+        report = (check.full_check if args.full else check.quick_check)(arch)
         labels = {disk.id: disk.label for disk in arch.disks}
         print(f"{report.files} files in the index, {len(report.differences)} differences")
         for diff in sorted(report.differences, key=lambda d: (d.kind, d.path, labels[d.disk_id])):

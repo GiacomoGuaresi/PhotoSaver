@@ -166,3 +166,17 @@ def test_migrations_upgrade_old_index(tmp_path, monkeypatch):
     with Index.open(path) as index:
         assert index.schema_version == idx.SCHEMA_VERSION
         assert index.archive_id == "arch"
+
+
+def test_meta_and_copies_on(index):
+    with index.transaction():
+        index.set_meta("x", "1")
+        index.add_disk("d1", "A")
+        index.put_file(rec("a.jpg"))
+        index.put_file(rec("b.jpg"))
+        index.set_copy("a.jpg", "d1", idx.OK)
+    assert index.get_meta("x") == "1"
+    assert index.copies_on("d1") == {"a.jpg": idx.Copy(idx.OK, None)}
+    with index.transaction():
+        index.delete_meta("x")
+    assert index.get_meta("x") is None

@@ -44,10 +44,10 @@ l'archivio deve contenere e com'è ogni copia su ogni disco.
 
 | Tabella | Contenuto |
 |---|---|
-| `meta` | `archive_id`, `hash_algorithm` (`sha256`), `revision`, `created` |
+| `meta` | `archive_id`, `hash_algorithm` (`sha256`), `revision`, `created`, `full_check_run` (check completo in corso: inizio e dischi), `last_full_check:<id disco>` |
 | `disks` | un record per disco: id, nome, data di aggiunta |
 | `files` | un record per file: percorso relativo alla cartella archivio (con `/`), dimensione, data di modifica (ns), hash, data di aggiunta |
-| `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`) e data dell'ultima verifica del contenuto |
+| `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`, `modified`) e data dell'ultima verifica del contenuto |
 | `events` | storico delle operazioni: data, tipo, percorso, disco, dettagli JSON |
 
 - I dischi sono **righe, non colonne**: una terza copia non cambia lo schema.

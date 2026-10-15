@@ -101,3 +101,6 @@ def test_check(dev, capsys):
 
     assert cli.main(["check", "--disks", a]) == 0
     assert "Not connected: B" in capsys.readouterr().out
+
+    assert cli.main(["check", "--disks", a, "--full"]) == 0
+    assert "16 files in the index, 0 differences" in capsys.readouterr().out
