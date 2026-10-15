@@ -15,6 +15,45 @@
   (percorso, dimensione, data, hash), lo storico e i problemi noti. È uguale
   su A e B.
 
+## Principi di UX: "granny software"
+
+L'app deve poterla usare chi sa usare pochissimo il computer. Ogni scelta di
+interfaccia si misura su questo.
+
+- **Guidata, passo per passo.** Ogni schermata dice tre cose: *dove sei*,
+  *cosa devi fare adesso*, *cosa succede dopo*. Una sola domanda per volta.
+- **Un pulsante principale** per schermata, grande e ben visibile. Le scelte
+  secondarie sono più piccole e meno evidenti.
+- **Niente tecnicismi** nei testi. L'interfaccia non mostra mai parole come
+  hash, indice, exFAT, sincronizzazione, mirror, `.photosaver`, percorsi di
+  file, codici di errore. Glossario:
+
+  | Nel codice / nei doc | Nell'interfaccia |
+  |---|---|
+  | Archivio | Le tue foto |
+  | Disco A / Disco B | Disco 1 / Disco 2 _(?) con etichetta adesiva colorata sul disco vero_ |
+  | Check rapido / completo | Controllo veloce / Controllo approfondito |
+  | Caricamento | Aggiungere foto |
+  | Corrotto, mancante, divergenze | "Una foto si è rovinata", "Una foto manca sul Disco 2" |
+  | Formattare / inizializzare | Preparare il disco |
+
+- **Spiegare con le immagini**: illustrazioni semplici (collegare il cavo,
+  quale disco, dove guardare) accanto ai testi.
+- **Rassicurare.** Lo stato normale si dice in chiaro: "Le tue foto sono al
+  sicuro su entrambi i dischi ✓". Le operazioni lunghe dicono quanto manca e
+  che si può aspettare tranquillamente.
+- **Errori spiegati come a una persona**: cosa è successo, se le foto sono a
+  rischio (quasi mai) e cosa fare, con un pulsante che lo fa.
+- **Difficile sbagliare.** Le azioni che cancellano qualcosa chiedono una
+  conferma chiara e, quando si può, si annullano (cestino). L'app non lascia
+  mai fare un'operazione pericolosa per distrazione.
+- **Leggibile**: testi grandi, contrasto alto, aree cliccabili ampie.
+- **L'app fa da sola** tutto ciò che non serve chiedere (controllo veloce
+  all'avvio, destinazione delle foto, doppioni), e chiede solo le decisioni
+  vere.
+- **Si chiude in modo guidato**: alla fine l'app dice quando si possono
+  scollegare i dischi in sicurezza (vedi §1).
+
 ## Finestra principale
 
 ```
@@ -37,19 +76,72 @@
 - **Barra in basso**, sempre visibile, con lo stato dei due dischi. Molte
   funzioni dipendono da quali dischi sono collegati.
 
+_(?) Con i principi "granny software" la barra laterale potrebbe essere
+troppo da "programma per esperti". Alternativa: una **home** con pochi
+pulsanti grandi ("Aggiungi foto", "Guarda le foto", "Controlla i dischi",
+"Ho finito") e ogni funzione come procedura a passi con "Indietro" /
+"Avanti". Storico e Cestino finirebbero in un menu secondario._
+
 ## 1. Avvio e riconoscimento dei dischi
 
 All'avvio, e ogni volta che si collega un disco, l'app cerca le cartelle
 `.photosaver/` sui volumi collegati (in sviluppo: nei percorsi configurati).
 
-| Situazione | Cosa succede |
+### La prima schermata: "Collega i dischi"
+
+L'app si apre **sempre** chiedendo di collegare i dischi, finché non li trova.
+Non c'è niente da cliccare: appena un disco viene collegato, la schermata si
+aggiorna da sola.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│              Collega i due dischi delle foto                 │
+│                                                              │
+│      [illustrazione: disco → cavo → computer]                │
+│                                                              │
+│      Prendi i due dischi con l'etichetta PhotoSaver e        │
+│      collegali con il loro cavo alle prese USB del computer. │
+│                                                              │
+│        ✓ Disco 1   trovato                                   │
+│        ◌ Disco 2   in attesa…                                │
+│                                                              │
+│      Ho un solo disco con me ›          È la prima volta? ›  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+- Mentre aspetta, l'app mostra che sta "ascoltando" (animazione leggera),
+  così è chiaro che non è bloccata.
+- Quando entrambi i dischi sono collegati: "Perfetto, ho trovato entrambi i
+  dischi" → parte da solo il **controllo veloce** ("Sto controllando che le
+  foto siano tutte a posto…", pochi secondi) → schermata principale con
+  "Le tue foto sono al sicuro ✓".
+- Se dopo un po' non trova niente, compare un aiuto: "Non vedo nessun disco.
+  Controlla che il cavo sia ben inserito; se il disco ha una lucina, deve
+  essere accesa." _(?) quanto aspettare: 30 s?_
+- **Ho un solo disco con me**: spiega che si possono *guardare* le foto ma non
+  aggiungerne né controllarle, e perché ("servono tutti e due, così le foto
+  restano uguali su entrambi"). Poi apre l'app in sola lettura.
+- **È la prima volta?** → procedura "Prepara i dischi" (§2).
+
+### Casi particolari, detti in modo semplice
+
+| Situazione | Cosa vede l'utente |
 |---|---|
-| Nessun disco | Pagina di benvenuto: "Collega un disco" / "Crea un nuovo archivio" / "Apri un disco a mano" |
-| Un disco dell'archivio | **Sola lettura**: visualizzatore e storico. Caricamento e check disattivati, con il motivo spiegato |
-| Entrambi i dischi | Tutto attivo. Parte subito il **check rapido**; se trova differenze compare un avviso |
-| Disco collegato ma vuoto, nuovo | Proposta: "Inizializza questo disco" |
-| Due dischi di archivi diversi | Errore chiaro, nessuna operazione |
-| Indici di A e B non allineati (es. operazione interrotta) | Il check rapido lo segnala e propone di ripristinare |
+| Un solo disco dell'archivio | Sola lettura, con un promemoria sempre visibile: "Stai guardando solo il Disco 1. Per aggiungere foto collega anche il Disco 2" |
+| Entrambi i dischi | Controllo veloce automatico, poi tutto attivo |
+| Disco nuovo, vuoto | "Questo disco è nuovo. Vuoi prepararlo per le tue foto?" → §2 |
+| Disco che non c'entra (chiavetta, disco di altro) | Ignorato; se è l'unico collegato: "Questo non è un disco delle foto. Collega i dischi con l'etichetta PhotoSaver" |
+| Dischi di due archivi diversi | "Questi due dischi non sono della stessa raccolta di foto. Scollegane uno." Nessuna operazione |
+| Operazione interrotta (es. disco staccato durante la copia) | "L'ultima volta qualcosa si è interrotto. Le tue foto sono al sicuro: sistemo io." [Sistema] |
+| Il controllo veloce trova differenze | Messaggio chiaro con il numero di problemi e un unico pulsante "Vediamo insieme" che porta al Check (§4) |
+
+### Fine: scollegare i dischi
+
+Un pulsante sempre visibile **"Ho finito"**: l'app termina quello che sta
+facendo (o chiede se interrompere), smonta i dischi in sicurezza e dice
+"Ora puoi scollegare i dischi e riporli". Così non serve sapere cos'è
+"rimozione sicura dell'hardware".
 
 ## 2. Creare un archivio (inizializzazione)
 
