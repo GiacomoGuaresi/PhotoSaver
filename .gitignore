@@ -22,3 +22,6 @@ Thumbs.db
 
 # Simulated disks for development (see doc/sviluppo.md)
 dev-disks/
+
+# Screenshots for reviewing the interface (scripts/screenshots.py)
+screenshots/
