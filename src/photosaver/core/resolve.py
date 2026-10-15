@@ -136,7 +136,8 @@ def _indexed_issue(path: str, diffs: list[Difference], archive: Archive) -> Issu
 
     if good:
         return Issue(I_COMPLEX, path, diffs, [Option(REPAIR), known])
-    return Issue(I_COMPLEX, path, diffs, [Option(FORGET), known])
+    # No good copy anywhere: keep what is left (a damaged photo is better than none)
+    return Issue(I_COMPLEX, path, diffs, [known])
 
 
 def _untracked_issue(path: str, diffs: list[Difference], archive: Archive) -> Issue:

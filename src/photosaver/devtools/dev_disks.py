@@ -179,8 +179,28 @@ def _photos(root: Path, disk: str) -> list[Path]:
     return sorted((root / disk / "Foto").rglob("*.jpg"))
 
 
-def _pick(root: Path, disk: str, rng: random.Random) -> Path:
-    return rng.choice(_photos(root, disk))
+class _Context:
+    """Shared by the scenarios of one run: each touches photos the others did not."""
+
+    def __init__(self, root: Path, rng: random.Random) -> None:
+        self.root = root
+        self.rng = rng
+        self.used: set[str] = set()  # paths relative to the archive folder
+
+    def pick(self, disk: str) -> Path:
+        archive = self.root / disk / "Foto"
+        free = [p for p in _photos(self.root, disk) if self._key(p, archive) not in self.used]
+        path = self.rng.choice(free)
+        self.used.add(self._key(path, archive))
+        return path
+
+    def use_folder(self, folder: Path, archive: Path) -> None:
+        for path in folder.rglob("*"):
+            self.used.add(self._key(path, archive))
+
+    @staticmethod
+    def _key(path: Path, archive: Path) -> str:
+        return path.relative_to(archive).as_posix().casefold()
 
 
 def _keep_date(path: Path, change) -> None:
@@ -189,9 +209,9 @@ def _keep_date(path: Path, change) -> None:
     os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
 
 
-def break_corrupt(root: Path, rng: random.Random) -> str:
+def break_corrupt(ctx: _Context) -> str:
     """Silent corruption: a byte changes on disk B, size and date do not."""
-    path = _pick(root, "disk-b", rng)
+    path = ctx.pick("disk-b")
 
     def flip(p: Path) -> None:
         data = bytearray(p.read_bytes())
@@ -199,60 +219,65 @@ def break_corrupt(root: Path, rng: random.Random) -> str:
         p.write_bytes(bytes(data))
 
     _keep_date(path, flip)
-    return f"corrupted {path.relative_to(root)}"
+    return f"corrupted {path.relative_to(ctx.root)}"
 
 
-def break_truncate(root: Path, rng: random.Random) -> str:
+def break_truncate(ctx: _Context) -> str:
     """A copy cut to 0 bytes on disk A, date unchanged."""
-    path = _pick(root, "disk-a", rng)
+    path = ctx.pick("disk-a")
     _keep_date(path, lambda p: p.write_bytes(b""))
-    return f"emptied {path.relative_to(root)}"
+    return f"emptied {path.relative_to(ctx.root)}"
 
 
-def break_delete(root: Path, rng: random.Random) -> str:
+def break_delete(ctx: _Context) -> str:
     """A photo deleted by hand from disk A."""
-    path = _pick(root, "disk-a", rng)
+    path = ctx.pick("disk-a")
     path.unlink()
-    return f"deleted {path.relative_to(root)}"
+    return f"deleted {path.relative_to(ctx.root)}"
 
 
-def break_move(root: Path, rng: random.Random) -> str:
+def break_move(ctx: _Context) -> str:
     """An event folder renamed by hand on disk B."""
-    folders = sorted({p.parent for p in _photos(root, "disk-b")} - {root / "disk-b" / "Foto"})
-    folder = rng.choice(folders)
+    archive = ctx.root / "disk-b" / "Foto"
+    folders = sorted({p.parent for p in _photos(ctx.root, "disk-b")} - {archive})
+    free = [
+        f for f in folders if not any(_Context._key(p, archive) in ctx.used for p in f.rglob("*"))
+    ]
+    folder = ctx.rng.choice(free)
+    ctx.use_folder(folder, archive)
     target = folder.with_name(folder.name + " (rinominata)")
     folder.rename(target)
-    return f"renamed {folder.relative_to(root)} → {target.name}"
+    return f"renamed {folder.relative_to(ctx.root)} → {target.name}"
 
 
-def break_edit(root: Path, rng: random.Random) -> str:
+def break_edit(ctx: _Context) -> str:
     """A photo edited with another program on disk A: new content, new date."""
-    path = _pick(root, "disk-a", rng)
-    make_photo(path, seed=rng.randrange(2**32), mtime=datetime.now())
-    return f"edited {path.relative_to(root)}"
+    path = ctx.pick("disk-a")
+    make_photo(path, seed=ctx.rng.randrange(2**32), mtime=datetime.now())
+    return f"edited {path.relative_to(ctx.root)}"
 
 
-def break_add(root: Path, rng: random.Random) -> str:
+def break_add(ctx: _Context) -> str:
     """A photo copied by hand onto disk A only."""
-    path = root / "disk-a" / "Foto" / "FOTO 2025" / "aggiunta a mano.jpg"
-    make_photo(path, taken=datetime(2025, 12, 25, 12), seed=rng.randrange(2**32))
-    return f"added {path.relative_to(root)}"
+    path = ctx.root / "disk-a" / "Foto" / "FOTO 2025" / "aggiunta a mano.jpg"
+    make_photo(path, taken=datetime(2025, 12, 25, 12), seed=ctx.rng.randrange(2**32))
+    return f"added {path.relative_to(ctx.root)}"
 
 
-def break_partial(root: Path, rng: random.Random) -> str:
+def break_partial(ctx: _Context) -> str:
     """An interrupted copy: a half-written partial file left on disk B."""
-    path = _pick(root, "disk-b", rng)
+    path = ctx.pick("disk-b")
     partial = path.with_name(f".{path.name}.photosaver-partial")
     partial.write_bytes(path.read_bytes()[: path.stat().st_size // 2])
-    return f"left {partial.relative_to(root)}"
+    return f"left {partial.relative_to(ctx.root)}"
 
 
-def break_desktop(root: Path, rng: random.Random) -> str:
+def break_desktop(ctx: _Context) -> str:
     """Odd files among the photos to upload: a 0-byte photo and Windows shortcuts."""
-    folder = root / DESKTOP / "LAGO 2026"
+    folder = ctx.root / DESKTOP / "LAGO 2026"
     make_file(folder / "20260920_180000.jpg", b"")
     for n in range(3):
-        make_file(folder / f"IMG_{n:04d}.jpg.lnk", b"L\x00\x00\x00" + rng.randbytes(60))
+        make_file(folder / f"IMG_{n:04d}.jpg.lnk", b"L\x00\x00\x00" + ctx.rng.randbytes(60))
     return "added a 0-byte photo and 3 .lnk shortcuts to desktop/LAGO 2026"
 
 
@@ -272,5 +297,6 @@ def break_disks(root: Path, names: list[str], *, seed: int = 0) -> list[str]:
     """Apply failure scenarios to set-up simulated disks; returns what was done."""
     if not (root / MARKER).is_file():
         raise NotDevDisks(f"{root} has no {MARKER} marker: not touching it")
-    rng = random.Random(seed)
-    return [SCENARIOS[name](root, rng) for name in names]
+    ctx = _Context(root, random.Random(seed))
+    # The folder move first: it needs a whole folder no other scenario touched
+    return [SCENARIOS[name](ctx) for name in sorted(names, key=lambda n: n != "move")]

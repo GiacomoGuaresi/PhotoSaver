@@ -208,6 +208,8 @@ def test_complex_case(filled):
     damage(path(filled, "B", "FOTO 2026/MARE/a.jpg"))
     (issue,) = issues(filled, full=True)
     assert issue.kind == resolve.I_COMPLEX and issue.proposed is None
+    # no good copy left: only "known", which keeps the damaged one
+    assert issue.options == [Option(resolve.KNOWN)]
 
 
 def test_nothing_chosen_nothing_done(filled):
