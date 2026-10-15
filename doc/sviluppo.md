@@ -1,5 +1,16 @@
 # Sviluppo
 
+## Comandi
+
+Serve [uv](https://docs.astral.sh/uv/).
+
+```sh
+uv sync                    # crea .venv e installa le dipendenze
+uv run pytest              # test
+uv run ruff check .        # lint
+uv run ruff format .       # formattazione
+```
+
 ## Dischi simulati
 
 Nelle prime fasi i "dischi" sono **cartelle locali non committate**. Più avanti
