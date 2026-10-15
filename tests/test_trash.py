@@ -18,7 +18,7 @@ def filled(arch):
 
 
 def test_schema_has_trash(filled):
-    assert SCHEMA_VERSION == 2
+    assert SCHEMA_VERSION >= 2
     assert filled.index.trash() == []
 
 

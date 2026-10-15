@@ -51,6 +51,7 @@ l'archivio deve contenere e com'è ogni copia su ogni disco.
 | `copies` | stato di ogni file su ogni disco (`ok`, `missing`, `corrupt`, `modified`) e data dell'ultima verifica del contenuto |
 | `events` | storico delle operazioni: data, tipo, percorso, disco, dettagli JSON |
 | `trash` | file nel cestino di ogni disco: percorso originale, posizione nel cestino, dimensione, data, hash, motivo (`deleted`, `replaced`) |
+| `journal` | operazioni in corso: tipo e parametri JSON; una riga rimasta indica un'operazione interrotta |
 | `known_issues` | differenze segnate come note: percorso, disco, tipo, hash visto (se il file cambia ancora, torna a essere segnalato) |
 
 - I dischi sono **righe, non colonne**: una terza copia non cambia lo schema.
@@ -94,3 +95,22 @@ semplice rinomina sullo stesso disco, quindi è immediato.
   lo riceveranno al check successivo.
 - **Svuota**: a mano, oppure solo i file più vecchi di N giorni (30 di default).
   I file sui dischi non collegati restano finché il disco non viene collegato.
+
+## Operazioni interrotte
+
+Se l'app si chiude o un disco si stacca a metà di un'operazione:
+
+- **Indici**: le operazioni scrivono sull'indice con la revisione più alta e lo
+  copiano sugli altri dischi a intervalli e alla fine. All'apertura vince
+  l'indice più recente, e gli altri vengono riallineati.
+- **Azioni di riparazione** (ripara, copia, cancella, sposta…): prima di toccare
+  i file, l'azione viene scritta nella tabella `journal` dell'indice. Se resta
+  una riga, l'app la segnala e la completa: ogni azione si può rieseguire senza
+  danni, perché riconosce quello che era già stato fatto (file già corretto,
+  già spostato, già nel cestino).
+- **Caricamento**: rifare il caricamento riprende da dove si era fermato. Un
+  file copiato su un disco ma non ancora registrato viene riconosciuto (dal
+  caricamento successivo, o dal check come "aggiunto a mano", con l'azione
+  "aggiungi" proposta).
+- **Copie a metà**: restano come `.photosaver-partial`, ignorati e sostituiti
+  dalla copia successiva.

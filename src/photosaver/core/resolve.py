@@ -13,6 +13,7 @@ had it (deleted on purpose, or lost?), a file edited outside the app.
 
 from __future__ import annotations
 
+import dataclasses
 import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -177,17 +178,72 @@ def apply(
         for n, issue in enumerate(todo):
             if should_stop and should_stop():
                 raise hashing.Cancelled("resolution interrupted")
-            try:
-                _ACTIONS[issue.chosen.action](archive, issue, issue.chosen)
-            except (OSError, safecopy.CopyError, KeyError) as error:
-                outcome.failed.append((issue, str(error)))
-            else:
-                outcome.done.append(issue)
+            entry = archive.index.begin(JOURNAL_OPERATION, _to_journal(issue))
+            _run(archive, issue, outcome)
+            with archive.index.transaction():
+                archive.index.end(entry)
             if on_progress:
                 on_progress(n + 1, len(todo))
     finally:
         archive.sync_indexes()
     return outcome
+
+
+def pending(archive: Archive) -> list[Issue]:
+    """Actions interrupted before they finished (the app was closed, a disk unplugged…)."""
+    return [
+        _from_journal(entry.params)
+        for entry in archive.index.journal()
+        if entry.operation == JOURNAL_OPERATION
+    ]
+
+
+def recover(archive: Archive) -> Outcome:
+    """Finish the interrupted actions. Every action can be run again safely: what was
+    already done is recognized and skipped."""
+    if not archive.complete:
+        raise ArchiveError(f"connect all the disks first: {', '.join(archive.missing)}")
+    outcome = Outcome()
+    try:
+        for entry in archive.index.journal():
+            if entry.operation != JOURNAL_OPERATION:
+                continue
+            _run(archive, _from_journal(entry.params), outcome)
+            with archive.index.transaction():
+                archive.index.end(entry.id)
+                archive.index.log("recovered", path=entry.params["issue"]["path"])
+    finally:
+        archive.sync_indexes()
+    return outcome
+
+
+JOURNAL_OPERATION = "resolve"
+
+
+def _run(archive: Archive, issue: Issue, outcome: Outcome) -> None:
+    try:
+        _ACTIONS[issue.chosen.action](archive, issue, issue.chosen)
+    except (OSError, safecopy.CopyError, KeyError) as error:
+        outcome.failed.append((issue, str(error)))
+    else:
+        outcome.done.append(issue)
+
+
+def _to_journal(issue: Issue) -> dict:
+    return {
+        "issue": {
+            "kind": issue.kind,
+            "path": issue.path,
+            "diffs": [dataclasses.asdict(d) for d in issue.diffs],
+        },
+        "option": dataclasses.asdict(issue.chosen),
+    }
+
+
+def _from_journal(params: dict) -> Issue:
+    issue = params["issue"]
+    diffs = [Difference(**d) for d in issue["diffs"]]
+    return Issue(issue["kind"], issue["path"], diffs, [], choice=Option(**params["option"]))
 
 
 def _disk(archive: Archive, disk_id: str) -> Disk:
@@ -206,12 +262,18 @@ def _bad(archive: Archive, issue: Issue) -> list[Disk]:
 def _replace_from(
     archive: Archive, source: Disk, targets: list[Disk], path: str, expected: str
 ) -> None:
-    """Put ``source``'s copy of ``path`` on ``targets``; what they had goes to the trash."""
+    """Put ``source``'s copy of ``path`` on ``targets``; what they had goes to the trash.
+    Targets that already have the right content are left alone."""
+    destinations = []
     for disk in targets:
-        if archive.path_on(disk, path).exists():
+        target = archive.path_on(disk, path)
+        if target.exists():
+            if hashing.hash_file(target) == expected:
+                continue
             trash.move_to_trash(archive, disk, path, reason=trash.REPLACED)
-    destinations = [archive.path_on(disk, path) for disk in targets]
-    safecopy.safe_copy(archive.path_on(source, path), destinations, expected_hash=expected)
+        destinations.append(target)
+    if destinations:
+        safecopy.safe_copy(archive.path_on(source, path), destinations, expected_hash=expected)
 
 
 def _mark_ok(archive: Archive, path: str, disks: list[Disk]) -> None:
@@ -240,7 +302,7 @@ def _delete_all(archive: Archive, issue: Issue, option: Option) -> None:
     record = archive.index.get_file(issue.path)
     for disk in archive.disks:
         if archive.path_on(disk, issue.path).exists():
-            trash.move_to_trash(archive, disk, issue.path, hash_=record.hash)
+            trash.move_to_trash(archive, disk, issue.path, hash_=record.hash if record else None)
     with archive.index.transaction():
         archive.index.remove_file(issue.path)
         archive.index.log("deleted", path=issue.path)
@@ -267,7 +329,7 @@ def _accept(archive: Archive, issue: Issue, option: Option) -> None:
     diff = issue.diffs[0]
     with archive.index.transaction():
         if issue.kind == I_MOVED:
-            archive.index.move_file(issue.path, diff.target)
+            _index_move(archive, issue.path, diff.target)
             _mark_ok(archive, diff.target, archive.disks)
             archive.index.log("moved", path=diff.target, source=issue.path)
         else:  # edited, or added by hand, the same way on every disk
@@ -281,7 +343,7 @@ def _repeat_move(archive: Archive, issue: Issue, option: Option) -> None:
     for disk in _good(archive, issue):
         _rename(archive.path_on(disk, issue.path), archive.path_on(disk, target))
     with archive.index.transaction():
-        archive.index.move_file(issue.path, target)
+        _index_move(archive, issue.path, target)
         _mark_ok(archive, target, archive.disks)
         archive.index.log("moved", path=target, source=issue.path)
 
@@ -299,11 +361,7 @@ def _add(archive: Archive, issue: Issue, option: Option) -> None:
     diff = issue.diffs[0]
     having = _bad(archive, issue)
     missing = [disk for disk in archive.disks if disk not in having]
-    if missing:
-        destinations = [archive.path_on(disk, issue.path) for disk in missing]
-        safecopy.safe_copy(
-            archive.path_on(having[0], issue.path), destinations, expected_hash=diff.hash
-        )
+    _replace_from(archive, having[0], missing, issue.path, diff.hash)
     with archive.index.transaction():
         archive.index.put_file(FileRecord(issue.path, diff.size, diff.mtime_ns, diff.hash))
         _mark_ok(archive, issue.path, archive.disks)
@@ -312,7 +370,9 @@ def _add(archive: Archive, issue: Issue, option: Option) -> None:
 
 def _delete(archive: Archive, issue: Issue, option: Option) -> None:
     for diff in issue.diffs:
-        trash.move_to_trash(archive, _disk(archive, diff.disk_id), issue.path, hash_=diff.hash)
+        disk = _disk(archive, diff.disk_id)
+        if archive.path_on(disk, issue.path).exists():
+            trash.move_to_trash(archive, disk, issue.path, hash_=diff.hash)
 
 
 def _known(archive: Archive, issue: Issue, option: Option) -> None:
@@ -321,10 +381,19 @@ def _known(archive: Archive, issue: Issue, option: Option) -> None:
 
 
 def _rename(source, target) -> None:
+    """Move a file, unless it was already moved (an interrupted action run again)."""
     if target.exists():
+        if not source.exists():
+            return
         raise FileExistsError(f"{target} already exists")
     target.parent.mkdir(parents=True, exist_ok=True)
     os.rename(source, target)
+
+
+def _index_move(archive: Archive, old: str, new: str) -> None:
+    if archive.index.get_file(old) is None and archive.index.get_file(new) is not None:
+        return  # already moved
+    archive.index.move_file(old, new)
 
 
 _ACTIONS = {

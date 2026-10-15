@@ -141,6 +141,12 @@ def _check(args) -> int:
     with archive.Archive.open([open_disk(path) for path in args.disks]) as arch:
         if arch.missing:
             print(f"Not connected: {', '.join(arch.missing)}")
+        interrupted = resolve.pending(arch)
+        if interrupted:
+            print(f"{len(interrupted)} interrupted actions" + ("" if args.fix else ": --fix"))
+            if args.fix:
+                outcome = resolve.recover(arch)
+                print(f"  finished {len(outcome.done)}, failed {len(outcome.failed)}")
         report = (check.full_check if args.full else check.quick_check)(arch)
         labels = {disk.id: disk.label for disk in arch.disks}
         print(f"{report.files} files in the index, {len(report.differences)} differences")

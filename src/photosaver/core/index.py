@@ -90,6 +90,15 @@ MIGRATIONS: list[str] = [
         PRIMARY KEY (path, disk_id, kind)
     );
     """,
+    # 3: journal of operations in progress
+    """
+    CREATE TABLE journal (
+        id         INTEGER PRIMARY KEY,
+        started_at TEXT NOT NULL,
+        operation  TEXT NOT NULL,
+        params     TEXT NOT NULL  -- JSON
+    );
+    """,
 ]
 SCHEMA_VERSION = len(MIGRATIONS)
 
@@ -139,6 +148,14 @@ class TrashEntry:
     hash: str | None
     trashed_at: str
     reason: str
+
+
+@dataclass(frozen=True)
+class JournalEntry:
+    id: int
+    started_at: str
+    operation: str
+    params: dict
 
 
 @dataclass(frozen=True)
@@ -409,6 +426,25 @@ class Index:
             "DELETE FROM known_issues WHERE path = ? AND disk_id = ? AND kind = ?",
             (path, disk_id, kind),
         )
+
+    # Journal of operations in progress
+
+    def begin(self, operation: str, params: dict) -> int:
+        """Record an operation before it changes any file: committed at once, so it
+        survives a crash in the middle of the operation."""
+        with self.transaction():
+            cursor = self._write(
+                "INSERT INTO journal (started_at, operation, params) VALUES (?, ?, ?)",
+                (now(), operation, json.dumps(params)),
+            )
+        return cursor.lastrowid
+
+    def end(self, entry_id: int) -> None:
+        self._write("DELETE FROM journal WHERE id = ?", (entry_id,))
+
+    def journal(self) -> list[JournalEntry]:
+        rows = self._db.execute("SELECT id, started_at, operation, params FROM journal ORDER BY id")
+        return [JournalEntry(i, at, op, json.loads(params)) for i, at, op, params in rows]
 
     # Copying the index to another disk
 
