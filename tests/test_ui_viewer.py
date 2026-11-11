@@ -1,5 +1,6 @@
 import pytest
 
+from photosaver.core import thumbs
 from photosaver.devtools import dev_disks
 from photosaver.ui import app as app_mod
 from photosaver.ui.controller import HOME
@@ -74,6 +75,11 @@ def test_photo_that_cant_be_read(qtbot, ui, dev):
     viewer = controller.show_viewer()
     viewer.show_folder("FOTO 2024/NEVE 2024")
     record = entries(viewer)[0].record
+    # The thumbnails made in the background may already include this photo: without
+    # this, the test depends on which of the two gets there first
+    controller.stop_thumbnails()
+    for disk in controller.disks:
+        thumbs.cache_path(disk.data_dir, record.hash).unlink(missing_ok=True)
     for disk in ("disk-a", "disk-b"):
         (dev / disk / "Foto" / record.path).write_bytes(b"broken")
     viewer.model.index(0).data(0x1)
